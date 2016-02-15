@@ -1,26 +1,20 @@
 package com.fromzerotoandroid.moneyflows;
 
-import android.app.Application;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -34,15 +28,18 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean firstUse = true;
+    private boolean simulateFirstUse = true;
 
     // Defines the SharedPreferences for keeping the values for each category
 
     public static final String VALUES_CATEGORY = "ValuesCategory";
+    public static final String COLORS_CATEGORY = "ColorsCategory";
     public static final String USERS_SETTINGS = "UserSettings";
+    public static final String TAG = "MainActivity";
 
     // Defines the spinner for selecting the category cost
     Spinner spinner;
+    int nrChildren;
 
     // Variables used by the graphical view of the data
     //  private static int[] COLORS = new int[]{Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.GRAY, Color.YELLOW};
@@ -52,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private GraphicalView mChartView;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
+    private LinearLayout chart;
 
     // Array of colors used by graphical view to represent categories
     private int[] arrColors = new int[20];
@@ -65,14 +63,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Check if this is the first time the app is accessed
-        if (firstUse) {
-            accessFirstTime();
-        }
+        Log.d(TAG, "onCreate");
 
-        // If it has been previously accessed, increment accessnumber
+        populateSpinnerCategories();
+
         sharedPreferences = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
         int accessnumber = sharedPreferences.getInt("accessnumber", 0);
+
+        if (simulateFirstUse) {
+            editor = sharedPreferences.edit();
+            editor.putInt("accessnumber", 0);
+            editor.commit();
+            accessnumber = 0;
+
+        }
+
+        // Check if this is the first time the app is accessed
+        if (accessnumber == 0) {
+            Log.d(TAG, "First use");
+//           setVisibilityGraph(View.INVISIBLE);
+        } else {
+            paintGraphics();
+//            setVisibilityGraph(View.VISIBLE);
+
+        }
+        // If it has been previously accessed, increment accessnumber
+
         accessnumber += 1;
         editor = sharedPreferences.edit();
         editor.putInt("accessnumber", accessnumber);
@@ -83,29 +99,14 @@ public class MainActivity extends AppCompatActivity {
         // Create an ArrayAdapter using the string array and a default spinner layout
         // Specify the layout to use when the list of choices appears
         // Apply the adapter to the spinner
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
-        int nrChildren = spinner.getCount();
-        Log.i("MYINFO", Integer.toString(nrChildren));
 
 
         // Set properties for the renderer that will be used for the graphical view
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.argb(255, 255, 255, 255));
-        mRenderer.setChartTitleTextSize(20);
-        mRenderer.setLabelsColor(Color.BLACK);
-        mRenderer.setLabelsTextSize(20);
-        mRenderer.setLegendTextSize(20);
-        mRenderer.setMargins(new int[]{20, 30, 15, 0});
-        mRenderer.setZoomButtonsVisible(true);
-        mRenderer.setStartAngle(90);
+
 
         // Dinamically generates colors for the categories
-        CategoryColor categoryColor = new CategoryColor();
-        arrColors = categoryColor.getColors(nrChildren);
+        paintGraphics();
 
         // Generates renderers for the categories and assign colors
 
@@ -116,30 +117,12 @@ public class MainActivity extends AppCompatActivity {
 //        editor.putFloat("Entertainment", 16.87f);
 //        editor.commit();
 
-
-        for (int i = 0; i < nrChildren; i++) {
-
-            // Retrieves the category from the spinner
-            sharedPreferences = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            valuecategories[i] = sharedPreferences.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
-
-            // Add the category to the serie and set the color
-            mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + valuecategories[i], valuecategories[i]);
-            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
-            renderer.setColor(arrColors[i]);
-            mRenderer.addSeriesRenderer(renderer);
-        }
-
-        if (mChartView != null) {
-            mChartView.repaint();
-        }
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
     }
+
 
     // Method called when ADD button is clicked
     public void addCost(View v) {
@@ -155,19 +138,94 @@ public class MainActivity extends AppCompatActivity {
         // Updates the value for the selected category
         SharedPreferences.Editor editor = sharedPreferences.edit();
         TextView tCost = (TextView) findViewById(R.id.etCost);
-        String inputCost = (String) tCost.getText().toString();
+        String inputCost = tCost.getText().toString();
         float updatedCost = actualCost + Float.parseFloat(inputCost);
         editor.putFloat(selectedItem, updatedCost);
         editor.commit();
 
         // Refresh the graphical view
-        mChartView.repaint();
+        paintGraphics();
+        // setVisibilityGraph(View.VISIBLE);
 
     }
 
-    public void accessFirstTime() {
+    public void setVisibilityGraph(int isVisible) {
 
-        editor.clear().commit();
+        chart = (LinearLayout) findViewById(R.id.chart);
+        chart.setVisibility(isVisible);
+    }
+
+    public void populateSpinnerCategories() {
+
+        spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    public void paintGraphics() {
+
+
+        nrChildren = spinner.getCount();
+
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(Color.argb(255, 255, 255, 255));
+        mRenderer.setChartTitleTextSize(20);
+        mRenderer.setLabelsColor(Color.BLACK);
+        mRenderer.setLabelsTextSize(20);
+        mRenderer.setLegendTextSize(20);
+        mRenderer.setMargins(new int[]{20, 30, 15, 0});
+        mRenderer.setZoomButtonsVisible(true);
+        mRenderer.setStartAngle(90);
+
+        CategoryColor categoryColor = new CategoryColor();
+        arrColors = categoryColor.getColors(nrChildren);
+
+        for (int i = 0; i < nrChildren; i++) {
+
+            // Retrieves the category from the spinner
+            sharedPreferences = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+            valuecategories[i] = sharedPreferences.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
+
+            // Add the category to the serie and set the color
+            mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + valuecategories[i], valuecategories[i]);
+            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
+            // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
+            renderer.setColor(arrColors[i]);
+            mRenderer.addSeriesRenderer(renderer);
+        }
+
+
+        if (mChartView == null) {
+            LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
+            mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
+            mRenderer.setClickEnabled(true);
+            mRenderer.setSelectableBuffer(10);
+
+            mChartView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
+
+
+                }
+            });
+
+            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
+                    return true;
+                }
+            });
+            layout.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.FILL_PARENT, LinearLayoutCompat.LayoutParams.FILL_PARENT));
+        } else {
+            mChartView.repaint();
+        }
+
+        if (mChartView != null) {
+            mChartView.repaint();
+        }
 
     }
 
@@ -197,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
             mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
