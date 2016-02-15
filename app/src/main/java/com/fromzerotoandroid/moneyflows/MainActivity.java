@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
     private SharedPreferences.Editor editor;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences usersSettings;
+    private SharedPreferences valuesCategory;
     private LinearLayout chart;
 
     // Array of colors used by graphical view to represent categories
     private int[] arrColors = new int[20];
-    float[] valuecategories = new float[20];
-
+    float[] arrayvaluecategories = new float[20];
 
 
     @Override
@@ -67,14 +67,19 @@ public class MainActivity extends AppCompatActivity {
 
         populateSpinnerCategories();
 
-        sharedPreferences = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
-        int accessnumber = sharedPreferences.getInt("accessnumber", 0);
+        usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
+        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+        int accessnumber = usersSettings.getInt("accessnumber", 0);
 
         if (simulateFirstUse) {
-            editor = sharedPreferences.edit();
+            editor = usersSettings.edit();
             editor.putInt("accessnumber", 0);
             editor.commit();
             accessnumber = 0;
+
+            editor = valuesCategory.edit();
+            editor.clear();
+            editor.commit();
 
         }
 
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         // If it has been previously accessed, increment accessnumber
 
         accessnumber += 1;
-        editor = sharedPreferences.edit();
+        editor = usersSettings.edit();
         editor.putInt("accessnumber", accessnumber);
         editor.commit();
 
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         // Create an ArrayAdapter using the string array and a default spinner layout
         // Specify the layout to use when the list of choices appears
         // Apply the adapter to the spinner
-
 
 
         // Set properties for the renderer that will be used for the graphical view
@@ -132,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
         String selectedItem = s.getSelectedItem().toString();
 
         // Retrieves the amount for the selected category
-        sharedPreferences = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-        float actualCost = sharedPreferences.getFloat(selectedItem, 0);
+        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+        float actualCost = valuesCategory.getFloat(selectedItem, 0);
 
         // Updates the value for the selected category
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = valuesCategory.edit();
         TextView tCost = (TextView) findViewById(R.id.etCost);
         String inputCost = tCost.getText().toString();
         float updatedCost = actualCost + Float.parseFloat(inputCost);
@@ -184,15 +188,17 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < nrChildren; i++) {
 
             // Retrieves the category from the spinner
-            sharedPreferences = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            valuecategories[i] = sharedPreferences.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
+            valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+            arrayvaluecategories[i] = valuesCategory.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
 
-            // Add the category to the serie and set the color
-            mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + valuecategories[i], valuecategories[i]);
-            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
-            renderer.setColor(arrColors[i]);
-            mRenderer.addSeriesRenderer(renderer);
+            if (arrayvaluecategories[i] > 0) {
+                // Add the category to the serie and set the color
+                mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
+                SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
+                // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
+                renderer.setColor(arrColors[i]);
+                mRenderer.addSeriesRenderer(renderer);
+            }
         }
 
 
