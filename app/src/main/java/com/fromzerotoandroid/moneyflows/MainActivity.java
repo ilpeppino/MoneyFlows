@@ -185,19 +185,32 @@ public class MainActivity extends AppCompatActivity {
         CategoryColor categoryColor = new CategoryColor();
         arrColors = categoryColor.getColors(nrChildren);
 
+        mSeries.clear();
         for (int i = 0; i < nrChildren; i++) {
 
             // Retrieves the category from the spinner
             valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
             arrayvaluecategories[i] = valuesCategory.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
 
+//            if (arrayvaluecategories[i] > 0) {
+//                // Add the category to the serie and set the color
+//                mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
+//                SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
+//                // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
+//                renderer.setColor(arrColors[i]);
+//                mRenderer.addSeriesRenderer(renderer);
+//            }
+
+
             if (arrayvaluecategories[i] > 0) {
                 // Add the category to the serie and set the color
                 mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
+
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
                 // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
                 renderer.setColor(arrColors[i]);
                 mRenderer.addSeriesRenderer(renderer);
+
             }
         }
 
