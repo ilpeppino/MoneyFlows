@@ -122,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
 //        editor.commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
+
 
 
     }
@@ -151,12 +154,6 @@ public class MainActivity extends AppCompatActivity {
         paintGraphics();
         // setVisibilityGraph(View.VISIBLE);
 
-    }
-
-    public void setVisibilityGraph(int isVisible) {
-
-        chart = (LinearLayout) findViewById(R.id.chart);
-        chart.setVisibility(isVisible);
     }
 
     public void populateSpinnerCategories() {
@@ -252,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.actions_toolbar, menu);
         return true;
     }
 
