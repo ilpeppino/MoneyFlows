@@ -9,6 +9,13 @@
         <item>Entertainment</item>
     </string-array>
 
+    <string name="editCost">Cost in euros</string>
+    <string name="editDescription">Description</string>
+    <string name="iconMoneyFlows">Money flows</string>
+
+    <string name="history">History</string>
+    <string name="about">About</string>
+    <string name="title_activity_about">AboutActivity</string>
 
 
 </resources>

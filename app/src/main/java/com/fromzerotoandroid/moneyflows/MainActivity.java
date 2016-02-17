@@ -1,6 +1,7 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -28,12 +30,12 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private boolean simulateFirstUse = true;
 
     // Defines the SharedPreferences for keeping the values for each category
-
     public static final String VALUES_CATEGORY = "ValuesCategory";
-    public static final String COLORS_CATEGORY = "ColorsCategory";
+    public static final String NAMES_CATEGORY = "NamesCategory";
     public static final String USERS_SETTINGS = "UserSettings";
     public static final String TAG = "MainActivity";
 
@@ -42,19 +44,19 @@ public class MainActivity extends AppCompatActivity {
     int nrChildren;
 
     // Variables used by the graphical view of the data
-    //  private static int[] COLORS = new int[]{Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.GRAY, Color.YELLOW};
-    private static double[] VALUES = new double[]{10, 11, 12, 13};
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
     private SharedPreferences.Editor editor;
     private SharedPreferences usersSettings;
     private SharedPreferences valuesCategory;
+    private SharedPreferences namesCategory;
     private LinearLayout chart;
 
     // Array of colors used by graphical view to represent categories
     private int[] arrColors = new int[20];
     float[] arrayvaluecategories = new float[20];
+    private int accessnumber;
 
 
     @Override
@@ -63,69 +65,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // Read the shared preferences
         Log.d(TAG, "onCreate");
-
-        populateSpinnerCategories();
-
         usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
         valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-        int accessnumber = usersSettings.getInt("accessnumber", 0);
+        namesCategory = getSharedPreferences(NAMES_CATEGORY, Context.MODE_PRIVATE);
 
+        // Checks if this the first time the app is accessed
+        accessnumber = usersSettings.getInt("accessnumber", 0);
+
+        // For first time usage simulation only, clean up the shared preferences
         if (simulateFirstUse) {
             editor = usersSettings.edit();
-            editor.putInt("accessnumber", 0);
+            editor.clear();
             editor.commit();
-            accessnumber = 0;
 
             editor = valuesCategory.edit();
             editor.clear();
             editor.commit();
 
-        }
-
-        // Check if this is the first time the app is accessed
-        if (accessnumber == 0) {
-            Log.d(TAG, "First use");
-//           setVisibilityGraph(View.INVISIBLE);
-        } else {
-            paintGraphics();
-//            setVisibilityGraph(View.VISIBLE);
+            editor = namesCategory.edit();
+            editor.clear();
+            editor.commit();
 
         }
-        // If it has been previously accessed, increment accessnumber
 
+        // Populate the spinner with the categories
+        populateSpinnerCategories();
+
+
+        // Increment accessnumber
         accessnumber += 1;
         editor = usersSettings.edit();
         editor.putInt("accessnumber", accessnumber);
         editor.commit();
 
-
-        // Populate the spinner with the categories defined in strings.xml
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        // Specify the layout to use when the list of choices appears
-        // Apply the adapter to the spinner
-
-
-        // Set properties for the renderer that will be used for the graphical view
-
-
-        // Dinamically generates colors for the categories
         paintGraphics();
-
-        // Generates renderers for the categories and assign colors
-
-//        SharedPreferences sharedPreferences = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putFloat("Groceries", 15.23f);
-//        editor.putFloat("Children", 13.45f);
-//        editor.putFloat("Entertainment", 16.87f);
-//        editor.commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-
 
 
     }
@@ -134,34 +115,44 @@ public class MainActivity extends AppCompatActivity {
     // Method called when ADD button is clicked
     public void addCost(View v) {
 
-        // Get the selected item from the spinner
-        Spinner s = (Spinner) findViewById(R.id.spinner);
-        String selectedItem = s.getSelectedItem().toString();
 
-        // Retrieves the amount for the selected category
-        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-        float actualCost = valuesCategory.getFloat(selectedItem, 0);
-
-        // Updates the value for the selected category
-        SharedPreferences.Editor editor = valuesCategory.edit();
         TextView tCost = (TextView) findViewById(R.id.etCost);
         String inputCost = tCost.getText().toString();
-        float updatedCost = actualCost + Float.parseFloat(inputCost);
-        editor.putFloat(selectedItem, updatedCost);
-        editor.commit();
 
-        // Refresh the graphical view
-        paintGraphics();
-        // setVisibilityGraph(View.VISIBLE);
+        if (!(inputCost.equals(""))) {
+            // Get the selected item from the spinner
+            Spinner s = (Spinner) findViewById(R.id.spinner);
+            String selectedItem = s.getSelectedItem().toString();
+
+            // Retrieves the amount for the selected category
+            valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+            float actualCost = valuesCategory.getFloat(selectedItem, 0);
+
+            // Updates the value for the selected category
+            SharedPreferences.Editor editor = valuesCategory.edit();
+
+            float updatedCost = actualCost + Float.parseFloat(inputCost);
+            editor.putFloat(selectedItem, updatedCost);
+            editor.commit();
+
+            // Refresh the graphical view
+            paintGraphics();
+        } else {
+            Toast.makeText(this, "Please insert cost", Toast.LENGTH_LONG).show();
+        }
+
 
     }
 
     public void populateSpinnerCategories() {
 
         spinner = (Spinner) findViewById(R.id.spinner);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+
+
     }
 
     public void paintGraphics() {
@@ -188,16 +179,6 @@ public class MainActivity extends AppCompatActivity {
             // Retrieves the category from the spinner
             valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
             arrayvaluecategories[i] = valuesCategory.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
-
-//            if (arrayvaluecategories[i] > 0) {
-//                // Add the category to the serie and set the color
-//                mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
-//                SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-//                // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
-//                renderer.setColor(arrColors[i]);
-//                mRenderer.addSeriesRenderer(renderer);
-//            }
-
 
             if (arrayvaluecategories[i] > 0) {
                 // Add the category to the serie and set the color
@@ -261,7 +242,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.about) {
+            Intent i = new Intent(getApplicationContext(), AboutActivity.class);
+            startActivity(i);
+            finish();
             return true;
         }
 
