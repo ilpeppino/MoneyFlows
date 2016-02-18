@@ -13,9 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.achartengine.ChartFactory;
@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences namesCategory;
     private LinearLayout chart;
 
+    private EditText et_Cost, et_Description;
+    private String mCost, mDescription;
+
     // Array of colors used by graphical view to represent categories
     private int[] arrColors = new int[20];
     float[] arrayvaluecategories = new float[20];
@@ -64,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        et_Cost = (EditText) findViewById(R.id.etCost);
+        et_Description = (EditText) findViewById(R.id.etDescription);
+
+
 
 
         // Read the shared preferences
@@ -115,11 +122,10 @@ public class MainActivity extends AppCompatActivity {
     // Method called when ADD button is clicked
     public void addCost(View v) {
 
+        mCost = et_Cost.getText().toString();
+        mDescription = et_Description.getText().toString();
 
-        TextView tCost = (TextView) findViewById(R.id.etCost);
-        String inputCost = tCost.getText().toString();
-
-        if (!(inputCost.equals(""))) {
+        if (!(mCost.equals(""))) {
             // Get the selected item from the spinner
             Spinner s = (Spinner) findViewById(R.id.spinner);
             String selectedItem = s.getSelectedItem().toString();
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             // Updates the value for the selected category
             SharedPreferences.Editor editor = valuesCategory.edit();
 
-            float updatedCost = actualCost + Float.parseFloat(inputCost);
+            float updatedCost = actualCost + Float.parseFloat(mCost);
             editor.putFloat(selectedItem, updatedCost);
             editor.commit();
 
