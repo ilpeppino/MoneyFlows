@@ -8,25 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="blablabblablabllablablabl" />
+        android:text="Author: ilpeppino\nVersion: 1.0" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/dialog_info">
 
-        <Button
-            android:id="@+id/dialog_cancel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.50"
-            android:text="Cancel" />
+    <Button
+        android:id="@+id/dialog_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_info"
+        android:layout_centerInParent="true"
+        android:onClick="closeDialogWindow"
+        android:text="OK" />
 
-        <Button
-            android:id="@+id/dialog_ok"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.50"
-            android:text="Agree" />
-    </LinearLayout>
+
 </RelativeLayout>

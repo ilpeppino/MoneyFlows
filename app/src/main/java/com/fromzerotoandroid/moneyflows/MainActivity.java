@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
+    // The parameter in the menuinflater points to the actions_toolbar.xml menu, where
+    // it's possible to define custom options.
+    // Dependencies: xml file in the menu folder, accessible via R.menu command
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actions_toolbar, menu);
@@ -235,17 +238,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    // When an option is selected in the menu, this method is called. The getItemId
+    // method gives back the id of the selected option
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up button, as long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // The ids accessible via R.id are defined in the actions_toolbar.xml
+        // menu file.
         if (id == R.id.about) {
+            // In order to call another activity that generates a new layout,
+            // use the following intent declaration. The second parameter specifies
+            // the class of the activity to be called. With startActivity, the onCreate
+            // on the called activity is called.
+            // Remember to specify a finish() to terminate the ativity when it's finished
             Intent i = new Intent(getApplicationContext(), AboutActivity.class);
             startActivity(i);
-            finish();
+            // finish();
             return true;
         }
 
