@@ -19,6 +19,7 @@ public class DbOperations extends SQLiteOpenHelper {
             "create table " + FeedReaderContract.CostEntry.TABLE_NAME + "(" +
                     FeedReaderContract.CostEntry.COLUMN_NAME_COST + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION + " text, " +
+                    FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " text);";
 
     private static final String DELETE_TABLE = "DELETE FROM ";
@@ -38,10 +39,11 @@ public class DbOperations extends SQLiteOpenHelper {
         Log.d(TAG, "Table created...");
     }
 
-    public void addRowToTable(SQLiteDatabase db, String cost, String desc, String date) {
+    public void addRowToTable(SQLiteDatabase db, String cost, String desc, String category, String date) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, cost);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, desc);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, category);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, date);
         db.insert(FeedReaderContract.CostEntry.TABLE_NAME, null, contentValues);
         Log.d(TAG, "Row inserted in the table...");

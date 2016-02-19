@@ -18,6 +18,7 @@ public final class FeedReaderContract {
         public static final String TABLE_NAME = "history";
         public static final String COLUMN_NAME_COST = "cost";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_CATEGORY = "category";
         public static final String COLUMN_NAME_DATE = "date";
 
     }

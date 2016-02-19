@@ -24,7 +24,7 @@ import android.widget.Toast;
 public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     Context c;
-    String mCost, mDescription, mDate;
+    String mCost, mDescription, mCategory, mDate;
 
     BackgroundTask(Context context) {
 
@@ -51,13 +51,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 mCost = params[1];
                 mDescription = params[2];
-                mDate = params[3];
+                mCategory = params[3];
+                mDate = params[4];
 
                 SQLiteDatabase dbAdd = dbOperations.getWritableDatabase();
-                dbOperations.addRowToTable(dbAdd, mCost, mDescription, mDate);
+                dbOperations.addRowToTable(dbAdd, mCost, mDescription, mCategory, mDate);
                 dbOperations.close();
 
                 toReturn = "One row inserted...";
+                break;
 
             case FeedReaderContract.Methods.ERASE_ALL:
                 // Purge the table from data
@@ -66,6 +68,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 dbOperations.close();
 
                 toReturn = "Data cleared...";
+                break;
         }
 
         return toReturn;

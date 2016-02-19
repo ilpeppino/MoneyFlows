@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 public class ResetAll extends AppCompatActivity {
 
@@ -32,5 +33,18 @@ public class ResetAll extends AppCompatActivity {
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    public void resetAllData(View v) {
+
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        // The execute method trigger the doInBackground method in the backgroundtask
+        backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL);
+        finish();
+    }
+
+    public void dontResetAllData(View v) {
+        finish();
+    }
+
 
 }

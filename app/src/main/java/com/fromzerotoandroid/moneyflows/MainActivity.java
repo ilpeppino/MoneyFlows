@@ -33,7 +33,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
 
-    private boolean simulateFirstUse = false;
+    private boolean simulateFirstUse = true;
 
     // Defines the SharedPreferences for keeping the values for each category
     public static final String VALUES_CATEGORY = "ValuesCategory";
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         et_Cost = (EditText) findViewById(R.id.etCost);
         et_Description = (EditText) findViewById(R.id.etDescription);
-
-
 
 
         // Read the shared preferences
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
             // The execute method trigger the doInBackground method in the backgroundtask
-            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, mCost, mDescription, date);
+            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, mCost, mDescription, selectedItem, date);
 
         } else {
             Toast.makeText(this, "Please insert cost", Toast.LENGTH_LONG).show();

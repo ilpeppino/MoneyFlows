@@ -3,9 +3,10 @@
 - History list from db
 - Improve resource destruction
     - dont open db if it's already created
-- Add a Reset data in toolbar menu
 - Remove firstusage flag when confident
+- Add categor to the table
 
 ___________________-
 
 - Method names (Actions on db) to define as private static final in the contract
+- Add a Reset data in toolbar menu
