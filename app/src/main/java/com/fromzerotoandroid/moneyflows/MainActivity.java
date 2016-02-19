@@ -25,6 +25,8 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private int[] arrColors = new int[20];
     float[] arrayvaluecategories = new float[20];
     private int accessnumber;
+
+    private static final String ADD_COST = "add_cost";
 
 
     @Override
@@ -126,23 +130,28 @@ public class MainActivity extends AppCompatActivity {
         mDescription = et_Description.getText().toString();
 
         if (!(mCost.equals(""))) {
+
+            // First of all, I save data in the SharedPreference
+
             // Get the selected item from the spinner
             Spinner s = (Spinner) findViewById(R.id.spinner);
             String selectedItem = s.getSelectedItem().toString();
-
             // Retrieves the amount for the selected category
             valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
             float actualCost = valuesCategory.getFloat(selectedItem, 0);
-
-            // Updates the value for the selected category
+            // Updates the value for the selected category in the SharedPreferences
             SharedPreferences.Editor editor = valuesCategory.edit();
-
             float updatedCost = actualCost + Float.parseFloat(mCost);
             editor.putFloat(selectedItem, updatedCost);
             editor.commit();
-
             // Refresh the graphical view
             paintGraphics();
+            // Insert this value in the table for the history
+            String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            BackgroundTask backgroundTask = new BackgroundTask(this);
+            // The execute method trigger the doInBackground method in the backgroundtask
+            backgroundTask.execute(ADD_COST, mCost, mDescription, date);
+
         } else {
             Toast.makeText(this, "Please insert cost", Toast.LENGTH_LONG).show();
         }
