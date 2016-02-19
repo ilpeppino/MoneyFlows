@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private int accessnumber;
 
     private static final String ADD_COST = "add_cost";
-
+    private static final String RESET_ALL = "reset_all";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // Checks if this the first time the app is accessed
         accessnumber = usersSettings.getInt("accessnumber", 0);
 
-        // For first time usage simulation only, clean up the shared preferences
+        // For first time usage simulation only, clean up the shared preferences and purge table
         if (simulateFirstUse) {
             editor = usersSettings.edit();
             editor.clear();
@@ -99,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
             editor = namesCategory.edit();
             editor.clear();
             editor.commit();
+
+            BackgroundTask backgroundTask = new BackgroundTask(this);
+            backgroundTask.execute(RESET_ALL, null);
+
 
         }
 
@@ -146,8 +150,9 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
             // Refresh the graphical view
             paintGraphics();
+
             // Insert this value in the table for the history
-            String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
             // The execute method trigger the doInBackground method in the backgroundtask
             backgroundTask.execute(ADD_COST, mCost, mDescription, date);

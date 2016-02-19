@@ -30,15 +30,15 @@ public final class FeedReaderContract {
     // In SQLLite, there is no DATE type. It can be TEXT for example,
     // formatted like YYYY-MM-DD HH:MM:SS.SSS
 
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + CostEntry.TABLE_NAME + " (" +
-                    CostEntry._ID + INT_TYPE + " PRIMARY KEY NOT NULL," +
-                    CostEntry.COLUMN_NAME_COST + REAL_TYPE + COMMA_SEP +
-                    CostEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                    CostEntry.COLUMN_NAME_DATE + TEXT_TYPE +
-                    " )";
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + CostEntry.TABLE_NAME;
+//    private static final String SQL_CREATE_ENTRIES =
+//            "CREATE TABLE " + CostEntry.TABLE_NAME + " (" +
+//                    CostEntry._ID + INT_TYPE + " PRIMARY KEY NOT NULL," +
+//                    CostEntry.COLUMN_NAME_COST + REAL_TYPE + COMMA_SEP +
+//                    CostEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
+//                    CostEntry.COLUMN_NAME_DATE + TEXT_TYPE +
+//                    " )";
+//
+//    private static final String SQL_DELETE_ENTRIES =
+//            "DROP TABLE IF EXISTS " + CostEntry.TABLE_NAME;
 }
 

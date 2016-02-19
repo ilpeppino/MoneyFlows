@@ -40,25 +40,35 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
+        // Get the method name as first parameter
         String method = params[0];
+        String toReturn = "";
         DbOperations dbOperations = new DbOperations(c);
 
+        switch (method) {
+            // Add the cost in the db
+            case "add_cost":
 
-        if (method.equals("add_cost")) {
+                mCost = params[1];
+                mDescription = params[2];
+                mDate = params[3];
 
-            mCost = params[1];
-            mDescription = params[2];
-            mDate = params[3];
-            SQLiteDatabase db = dbOperations.getWritableDatabase();
+                SQLiteDatabase dbAdd = dbOperations.getWritableDatabase();
+                dbOperations.addRowToTable(dbAdd, mCost, mDescription, mDate);
+                dbOperations.close();
 
+                toReturn = "One row inserted...";
 
-            dbOperations.addRowToTable(db, mCost, mDescription, mDate);
+            case "reset_all":
+                // Purge the table from data
+                SQLiteDatabase dbReset = dbOperations.getWritableDatabase();
+                dbOperations.purgeTable(dbReset, FeedReaderContract.CostEntry.TABLE_NAME);
+                dbOperations.close();
 
-
+                toReturn = "Data cleared...";
         }
 
-        return "One row inserted";
-
+        return toReturn;
     }
 
     @Override
@@ -70,4 +80,6 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         Toast.makeText(c, result, Toast.LENGTH_LONG).show();
     }
+
+
 }

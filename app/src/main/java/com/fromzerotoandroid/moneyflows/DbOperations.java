@@ -21,6 +21,8 @@ public class DbOperations extends SQLiteOpenHelper {
                     FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " text);";
 
+    private static final String DELETE_TABLE = "DELETE FROM ";
+
     // This constructor MUST be defined
     public DbOperations(Context context) {
 
@@ -45,6 +47,11 @@ public class DbOperations extends SQLiteOpenHelper {
         Log.d(TAG, "Row inserted in the table...");
     }
 
+    public void purgeTable(SQLiteDatabase db, String tableNameToPurge) {
+
+        db.delete(tableNameToPurge, null, null);
+
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

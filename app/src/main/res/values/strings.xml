@@ -16,6 +16,7 @@
     <string name="history">History</string>
     <string name="about">About</string>
     <string name="title_activity_about">AboutActivity</string>
+    <string name="resetall">Reset all</string>
 
 
 </resources>
