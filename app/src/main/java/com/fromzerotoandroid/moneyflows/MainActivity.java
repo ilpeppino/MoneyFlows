@@ -33,7 +33,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
 
-    private boolean simulateFirstUse = true;
+    private boolean simulateFirstUse = false;
 
     // Defines the SharedPreferences for keeping the values for each category
     public static final String VALUES_CATEGORY = "ValuesCategory";
@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     float[] arrayvaluecategories = new float[20];
     private int accessnumber;
 
-    private static final String ADD_COST = "add_cost";
-    private static final String RESET_ALL = "reset_all";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
 
             BackgroundTask backgroundTask = new BackgroundTask(this);
-            backgroundTask.execute(RESET_ALL, null);
+            backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
 
 
         }
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
             // The execute method trigger the doInBackground method in the backgroundtask
-            backgroundTask.execute(ADD_COST, mCost, mDescription, date);
+            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, mCost, mDescription, date);
 
         } else {
             Toast.makeText(this, "Please insert cost", Toast.LENGTH_LONG).show();
@@ -277,6 +275,12 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), AboutActivity.class);
             startActivity(i);
             // finish();
+            return true;
+        }
+
+        if (id == R.id.resetall) {
+            Intent i = new Intent(getApplicationContext(), ResetAll.class);
+            startActivity(i);
             return true;
         }
 

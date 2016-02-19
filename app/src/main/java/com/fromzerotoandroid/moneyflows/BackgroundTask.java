@@ -47,7 +47,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
         switch (method) {
             // Add the cost in the db
-            case "add_cost":
+            case FeedReaderContract.Methods.ADD_COST:
 
                 mCost = params[1];
                 mDescription = params[2];
@@ -59,7 +59,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 toReturn = "One row inserted...";
 
-            case "reset_all":
+            case FeedReaderContract.Methods.ERASE_ALL:
                 // Purge the table from data
                 SQLiteDatabase dbReset = dbOperations.getWritableDatabase();
                 dbOperations.purgeTable(dbReset, FeedReaderContract.CostEntry.TABLE_NAME);

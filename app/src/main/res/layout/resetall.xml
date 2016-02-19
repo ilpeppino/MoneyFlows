@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/resetall_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Do you really want to erase data?\nAll your data will be permanently lost" />
+
+
+    <Button
+        android:id="@+id/resetall_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/resetall_message"
+        android:layout_below="@id/resetall_message"
+        android:onClick="resetAllData"
+        android:text="OK" />
+
+    <Button
+        android:id="@+id/resetall_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/resetall_message"
+        android:layout_below="@id/resetall_message"
+        android:onClick="dontResetAllData"
+        android:text="Cancel" />
+
+
+</RelativeLayout>

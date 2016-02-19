@@ -22,10 +22,17 @@ public final class FeedReaderContract {
 
     }
 
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String INT_TYPE = " INT";
-    private static final String REAL_TYPE = " REAL";
-    private static final String COMMA_SEP = ",";
+    public static abstract class Methods {
+
+        public static final String ADD_COST = "add_cost";
+        public static final String ERASE_ALL = "erase_all";
+
+    }
+
+//    private static final String TEXT_TYPE = " TEXT";
+//    private static final String INT_TYPE = " INT";
+//    private static final String REAL_TYPE = " REAL";
+//    private static final String COMMA_SEP = ",";
 
     // In SQLLite, there is no DATE type. It can be TEXT for example,
     // formatted like YYYY-MM-DD HH:MM:SS.SSS
