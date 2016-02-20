@@ -1,12 +1,33 @@
-- Static colors per category
-- Custom color per category chosen by user
-- History list from db
-- Improve resource destruction
-    - dont open db if it's already created
-- Remove firstusage flag when confident
-- Add categor to the table
+TO-DO
 
-___________________-
+CATEGORIES AND GRAPH
+    - Set default categories
+    - Move categories from string.xml to SharedPreferences
+    - Assign static colors to category
+    - Let user change category color
+    - Check how to hover on the graph and pie slice pop up
+
+
+COST HISTORY
+    - add toolbar button
+    - add layout
+    - add listview (or other)
+    - make items selectable
+
+RESOURCE OPTIMIZATION
+    - dont open db if it's already created
+
+- Remove firstusage flag when confident
+
+SETTINGS
+    - Reset data every x days / day in a month (but keep history)
+
+
+
+
+___________________
+DONE
 
 - Method names (Actions on db) to define as private static final in the contract
 - Add a Reset data in toolbar menu
+- Add category to the table

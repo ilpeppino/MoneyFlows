@@ -18,6 +18,7 @@
     <string name="title_activity_about">AboutActivity</string>
     <string name="resetall">Reset all</string>
     <string name="title_activity_reset_all">ResetAll</string>
+    <string name="title_activity_history_list">HistoryList</string>
 
 
 </resources>

@@ -21,7 +21,6 @@ import android.widget.Toast;
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.CategorySeries;
-import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
@@ -124,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Method called when ADD button is clicked
+
+    // PS: methods associated with click buttons or other user interaction defined in xml
+    // must be PUBLIC
+
     public void addCost(View v) {
 
         mCost = et_Cost.getText().toString();
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void populateSpinnerCategories() {
+    private void populateSpinnerCategories() {
 
         spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -171,14 +174,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void paintGraphics() {
+    private void paintGraphics() {
 
 
         nrChildren = spinner.getCount();
 
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.argb(255, 255, 255, 255));
+        mRenderer.setApplyBackgroundColor(false);
+        // mRenderer.setBackgroundColor(Color.argb(255, 255, 255, 255));
         mRenderer.setChartTitleTextSize(20);
+        mRenderer.setShowLegend(false);
         mRenderer.setLabelsColor(Color.BLACK);
         mRenderer.setLabelsTextSize(20);
         mRenderer.setLegendTextSize(20);
@@ -201,43 +205,27 @@ public class MainActivity extends AppCompatActivity {
                 mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
 
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-                // renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
                 renderer.setColor(arrColors[i]);
                 mRenderer.addSeriesRenderer(renderer);
 
             }
         }
 
+        drawPieChart();
+
+    }
+
+    private void drawPieChart() {
 
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
             mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
-            mRenderer.setClickEnabled(true);
-            mRenderer.setSelectableBuffer(10);
+            layout.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.MATCH_PARENT));
 
-            mChartView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-
-
-                }
-            });
-
-            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-                    return true;
-                }
-            });
-            layout.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.FILL_PARENT, LinearLayoutCompat.LayoutParams.FILL_PARENT));
         } else {
-            mChartView.repaint();
-        }
 
-        if (mChartView != null) {
             mChartView.repaint();
+
         }
 
     }
@@ -282,79 +270,53 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.listview_history) {
+            Intent i = new Intent(getApplicationContext(), HistoryList.class);
+            startActivity(i);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
-        if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
-            mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
-            mRenderer.setClickEnabled(true);
-            mRenderer.setSelectableBuffer(10);
-
-            mChartView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-
-
-                }
-            });
-
-            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-                    return true;
-                }
-            });
-            layout.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.FILL_PARENT, LinearLayoutCompat.LayoutParams.FILL_PARENT));
-        } else {
-            mChartView.repaint();
-        }
-    }
-}
-
-class CategoryColor {
-
-    private int[] colors;
-    private double red, blue, green, alpha;
-
-    CategoryColor() {
-        red = 0;
-        blue = 0;
-        green = 0;
-        alpha = 0;
-        colors = new int[20];
+        // drawPieChart();
 
     }
 
-    public int[] getColors(int nrCategories) {
-        Random r = new Random();
+    class CategoryColor {
 
-        for (int i = 0; i < nrCategories; i++) {
+        private int[] colors;
+        private double red, blue, green, alpha;
 
-            red = Math.random() * 255;
-            blue = Math.random() * 255;
-            green = Math.random() * 255;
-            alpha = Math.random() * 255;
-            colors[i] = Color.argb((int) alpha, (int) red, (int) blue, (int) green);
+        CategoryColor() {
+            red = 0;
+            blue = 0;
+            green = 0;
+            alpha = 0;
+            colors = new int[20];
 
- /*           TextView tvRed = (TextView) findViewById(R.id.red);
-            TextView tvBlue = (TextView) findViewById(R.id.blue);
-            TextView tvGreen = (TextView) findViewById(R.id.green);
-
-            tvRed.setBackgroundColor((int)red);
-            tvBlue.setBackgroundColor((int)blue);
-            tvGreen.setBackgroundColor((int)green); **/
         }
 
-        return colors;
-    }
+        public int[] getColors(int nrCategories) {
+            Random r = new Random();
 
+            for (int i = 0; i < nrCategories; i++) {
+
+                red = Math.random() * 255;
+                blue = Math.random() * 255;
+                green = Math.random() * 255;
+                alpha = Math.random() * 255;
+                colors[i] = Color.argb((int) alpha, (int) red, (int) blue, (int) green);
+
+            }
+
+            return colors;
+        }
+
+    }
 }
 
 // A contract class is a container for constants that define names for URIs, tables, and columns.
