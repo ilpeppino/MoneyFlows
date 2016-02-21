@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.listview_history) {
+        if (id == R.id.history) {
             Intent i = new Intent(getApplicationContext(), HistoryList.class);
             startActivity(i);
             return true;
