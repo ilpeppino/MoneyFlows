@@ -32,7 +32,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
 
-    private boolean simulateFirstUse = true;
+    private boolean simulateFirstUse = false;
 
     // Defines the SharedPreferences for keeping the values for each category
     public static final String VALUES_CATEGORY = "ValuesCategory";

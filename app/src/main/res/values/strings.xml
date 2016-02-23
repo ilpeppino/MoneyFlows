@@ -15,10 +15,10 @@
 
     <string name="history">History</string>
     <string name="about">About</string>
-    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_about">About Activity</string>
     <string name="resetall">Reset all</string>
-    <string name="title_activity_reset_all">ResetAll</string>
-    <string name="title_activity_history_list">HistoryList</string>
+    <string name="title_activity_reset_all">Reset All</string>
+    <string name="title_activity_history_list">History</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -61,7 +62,9 @@ public class HistoryList extends AppCompatActivity {
 //       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         listview.setAdapter(new CustomAdapter(this, listViewItems));
 
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbar);
+        toolbar.showOverflowMenu();
+        setSupportActionBar(toolbar);
 
 
 
