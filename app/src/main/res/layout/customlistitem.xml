@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/customlistiem_Date"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:background="@color/customlistitem_Date"
+        android:text="Date" />
+
+    <TextView
+        android:id="@+id/customlistiem_Cost"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:background="@color/customlistitem_Cost"
+        android:text="Cost" />
+
+    <TextView
+        android:id="@+id/customlistiem_Category"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="Category" />
+
+
+</LinearLayout> 
