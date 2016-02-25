@@ -319,11 +319,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-// A contract class is a container for constants that define names for URIs, tables, and columns.
-// The contract class allows you to use the same constants across all the other classes in the same package.
-// This lets you change a column name in one place and have it propagate throughout your code.
-// A good way to organize a contract class is to put definitions that are global to your whole database in the root level of the class.
-// Then create an inner class for each table that enumerates its columns.
+
 
 
 

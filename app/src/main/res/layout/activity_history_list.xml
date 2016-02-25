@@ -18,7 +18,7 @@
             android:titleTextColor="#ff2233"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#ff112254"
+            android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />

@@ -57,14 +57,17 @@ public class HistoryList extends AppCompatActivity {
             Log.e("History", "Error during database processing");
         }
 
-        setContentView(R.layout.activity_history_list);
+        setContentView(R.layout.content_history_list);
         ListView listview = (ListView) findViewById(R.id.listView);
 //       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         listview.setAdapter(new CustomAdapter(this, listViewItems));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbarlist);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("History");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 

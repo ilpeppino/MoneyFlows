@@ -13,22 +13,26 @@
     tools:context=".HistoryList"
     tools:showIn="@layout/activity_history_list">
 
-    <TextView
-        android:id="@+id/textView1"
+    <android.support.v7.widget.Toolbar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25dp"
-        android:layout_below="@id/history_toolbar"
-        android:textStyle="bold"
-        android:textColor="@color/customlistitem_Date"
-        android:text="History" />
+        android:id="@+id/history_toolbarlist" />
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textSize="25dp"-->
+    <!--android:layout_below="@id/history_toolbar"-->
+    <!--android:textStyle="bold"-->
+    <!--android:textColor="@color/customlistitem_Date"-->
+    <!--android:text="History" />-->
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:dividerHeight="@dimen/activity_vertical_margin"
-        android:layout_below="@id/textView1">
+        android:dividerHeight="8dp">
 
     </ListView>
 

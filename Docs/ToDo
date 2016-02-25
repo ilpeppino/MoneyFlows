@@ -9,10 +9,11 @@ CATEGORIES AND GRAPH
 
 
 COST HISTORY
-    - add toolbar button
-    - add layout
-    - add listview (or other)
-    - make items selectable
+    - add icon for categories
+    - remove description
+    - sorting
+        - start with date (from newest to oldest)
+    - format date in layout as dd-MM-yyyy
 
 RESOURCE OPTIMIZATION
     - dont open db if it's already created
