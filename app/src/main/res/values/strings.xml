@@ -5,8 +5,12 @@
 
     <string-array name="categories">
         <item>Groceries</item>
-        <item>Children</item>
-        <item>Entertainment</item>
+        <item>Family</item>
+        <item>Leisure</item>
+        <item>Transportation</item>
+        <item>Health</item>
+        <item>Pets</item>
+
     </string-array>
 
     <string name="editCost">Cost in euros</string>

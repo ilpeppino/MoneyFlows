@@ -12,8 +12,8 @@ COST HISTORY
     - add icon for categories
     - remove description
     - sorting
-        - start with date (from newest to oldest)
-    - format date in layout as dd-MM-yyyy
+
+
 
 RESOURCE OPTIMIZATION
     - dont open db if it's already created
@@ -32,3 +32,5 @@ DONE
 - Method names (Actions on db) to define as private static final in the contract
 - Add a Reset data in toolbar menu
 - Add category to the table
+- format date in layout as dd-MM-yyyy
+- start with date (from newest to oldest)

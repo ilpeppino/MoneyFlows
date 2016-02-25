@@ -3,18 +3,22 @@ package com.fromzerotoandroid.moneyflows;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ListView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HistoryList extends AppCompatActivity {
 
-    public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME;
+    public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,16 @@ public class HistoryList extends AppCompatActivity {
                         String cost = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
                         String category = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
                         String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
-                        String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
+
+                        //  Formatting date in nice format
+                        DateFormat fromFormat = new SimpleDateFormat("yyyyMMdd");
+                        fromFormat.setLenient(false);
+                        DateFormat toFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        toFormat.setLenient(false);
+                        Date temp_date = fromFormat.parse(c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
+                        String date = toFormat.format(temp_date);
+
+                        // String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
                         ListViewItem lvItem = new ListViewItem();
                         lvItem.cost = cost;
@@ -64,6 +77,7 @@ public class HistoryList extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbarlist);
         toolbar.showOverflowMenu();
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("History");
         getSupportActionBar().setHomeButtonEnabled(true);

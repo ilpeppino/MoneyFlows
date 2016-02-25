@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateSpinnerCategories() {
 
+
         spinner = (Spinner) findViewById(R.id.spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
