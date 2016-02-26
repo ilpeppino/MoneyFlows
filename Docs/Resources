@@ -1,0 +1,7 @@
+SHAREDPREFERENCES
+
+VALUES_CATEGORY = contains the actual cost for a specific category
+    category <-> cost
+
+COLOR_CATEGORY = contains the color associated to a category
+    category <->

@@ -3,6 +3,7 @@ package com.fromzerotoandroid.moneyflows;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,13 +27,12 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    private boolean simulateFirstUse = false;
+    private boolean simulateFirstUse = true;
 
     // Defines the SharedPreferences for keeping the values for each category
     public static final String VALUES_CATEGORY = "ValuesCategory";
@@ -40,6 +40,20 @@ public class MainActivity extends AppCompatActivity {
     public static final String USERS_SETTINGS = "UserSettings";
     public static final String COLORS_CATEGORY = "ColorsCategory";
     public static final String TAG = "MainActivity";
+    public static final int[] COLOR_PALETTE = {
+
+            Color.argb(255, 255, 0, 0),
+            Color.argb(255, 0, 255, 0),
+            Color.argb(255, 0, 0, 255),
+            Color.argb(255, 128, 0, 128),
+            Color.argb(255, 0, 128, 128),
+            Color.argb(255, 128, 128, 128),
+            Color.argb(255, 200, 128, 128),
+            Color.argb(255, 255, 128, 255),
+            Color.argb(255, 128, 0, 255),
+            Color.argb(255, 0, 0, 0),
+
+    };
 
     // Defines the spinner for selecting the category cost
     Spinner spinner;
@@ -61,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Array of colors used by graphical view to represent categories
     private int[] arrColors = new int[20];
-    float[] arrayvaluecategories = new float[20];
+    //    float[] arrayvaluecategories = new float[20];
     private int accessnumber;
 
 
@@ -127,13 +141,27 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.commit();
 
+        // For colors, i clear what we have and repopulate with standard colors
         editor = colorCategory.edit();
         editor.clear();
+        editor.commit();
+
+        Resources r = getResources();
+        String[] cat = r.getStringArray(R.array.categories);
+
+        editor = colorCategory.edit();
+        for (int i = 0; i < cat.length; i++) {
+            String currentCategory = cat[i].toString();
+
+            editor.putInt(currentCategory, COLOR_PALETTE[i]);
+
+        }
         editor.commit();
 
         // Clear the cost table (for now)
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
+
 
     }
 
@@ -209,22 +237,26 @@ public class MainActivity extends AppCompatActivity {
         mRenderer.setZoomButtonsVisible(true);
         mRenderer.setStartAngle(90);
 
-        CategoryColor categoryColor = new CategoryColor();
-        arrColors = categoryColor.getColors(nrChildren);
+//        CategoryColor categoryColor = new CategoryColor();
+//        arrColors = categoryColor.getColors(nrChildren);
 
         mSeries.clear();
         for (int i = 0; i < nrChildren; i++) {
 
             // Retrieves the category from the spinner
             valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            arrayvaluecategories[i] = valuesCategory.getFloat(spinner.getAdapter().getItem(i).toString(), 0);
+            colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+            String currentCategory = spinner.getAdapter().getItem(i).toString();
+            float currentValue = valuesCategory.getFloat(currentCategory, 0);
 
-            if (arrayvaluecategories[i] > 0) {
+
+            if (currentValue > 0) {
                 // Add the category to the serie and set the color
-                mSeries.add(spinner.getAdapter().getItem(i).toString() + " " + arrayvaluecategories[i], arrayvaluecategories[i]);
+                mSeries.add(currentCategory + " " + currentValue, currentValue);
 
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-                renderer.setColor(arrColors[i]);
+                renderer.setColor(colorCategory.getInt(currentCategory, 0));
+
                 mRenderer.addSeriesRenderer(renderer);
 
             }
@@ -305,37 +337,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class CategoryColor {
-
-        private int[] colors;
-        private double red, blue, green, alpha;
-
-        CategoryColor() {
-            red = 0;
-            blue = 0;
-            green = 0;
-            alpha = 0;
-            colors = new int[20];
-
-        }
-
-        public int[] getColors(int nrCategories) {
-            Random r = new Random();
-
-            for (int i = 0; i < nrCategories; i++) {
-
-                red = Math.random() * 255;
-                blue = Math.random() * 255;
-                green = Math.random() * 255;
-                alpha = Math.random() * 255;
-                colors[i] = Color.argb((int) alpha, (int) red, (int) blue, (int) green);
-
-            }
-
-            return colors;
-        }
-
-    }
+//    class CategoryColor {
+//
+//        private int[] colors;
+//        private double red, blue, green, alpha;
+//
+//        CategoryColor() {
+//            red = 0;
+//            blue = 0;
+//            green = 0;
+//            alpha = 0;
+//            colors = new int[20];
+//
+//        }
+//
+//        public int[] getColors(int nrCategories) {
+//            Random r = new Random();
+//
+//            for (int i = 0; i < nrCategories; i++) {
+//
+//                red = Math.random() * 255;
+//                blue = Math.random() * 255;
+//                green = Math.random() * 255;
+//                alpha = Math.random() * 255;
+//                colors[i] = Color.argb((int) alpha, (int) red, (int) blue, (int) green);
+//
+//            }
+//
+//            return colors;
+//        }
+//
+//    }
 }
 
 

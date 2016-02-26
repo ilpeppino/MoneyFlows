@@ -24,6 +24,10 @@ SETTINGS
     - Reset data every x days / day in a month (but keep history)
 
 
+PAINT PIE
+- Read values from db and remove shared preferences
+
+
 
 
 ___________________
