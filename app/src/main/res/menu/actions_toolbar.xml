@@ -4,6 +4,10 @@
 
 
     <item
+        android:id="@+id/settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/history"
         android:title="@string/history"
         app:showAsAction="never" />

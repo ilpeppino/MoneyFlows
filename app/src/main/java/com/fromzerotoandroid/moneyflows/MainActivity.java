@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String VALUES_CATEGORY = "ValuesCategory";
     public static final String NAMES_CATEGORY = "NamesCategory";
     public static final String USERS_SETTINGS = "UserSettings";
+    public static final String COLORS_CATEGORY = "ColorsCategory";
     public static final String TAG = "MainActivity";
 
     // Defines the spinner for selecting the category cost
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences usersSettings;
     private SharedPreferences valuesCategory;
     private SharedPreferences namesCategory;
+    private SharedPreferences colorCategory;
     private LinearLayout chart;
 
     private EditText et_Cost, et_Description;
@@ -77,27 +79,15 @@ public class MainActivity extends AppCompatActivity {
         usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
         valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
         namesCategory = getSharedPreferences(NAMES_CATEGORY, Context.MODE_PRIVATE);
+        colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
 
         // Checks if this the first time the app is accessed
         accessnumber = usersSettings.getInt("accessnumber", 0);
 
         // For first time usage simulation only, clean up the shared preferences and purge table
-        if (simulateFirstUse) {
-            editor = usersSettings.edit();
-            editor.clear();
-            editor.commit();
+        if (simulateFirstUse || accessnumber == 0) {
 
-            editor = valuesCategory.edit();
-            editor.clear();
-            editor.commit();
-
-            editor = namesCategory.edit();
-            editor.clear();
-            editor.commit();
-
-            BackgroundTask backgroundTask = new BackgroundTask(this);
-            backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
-
+            accessFirstTime();
 
         }
 
@@ -121,6 +111,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void accessFirstTime() {
+
+        // Clear shared preferences
+        editor = usersSettings.edit();
+        editor.clear();
+        editor.commit();
+
+        editor = valuesCategory.edit();
+        editor.clear();
+        editor.commit();
+
+        editor = namesCategory.edit();
+        editor.clear();
+        editor.commit();
+
+        editor = colorCategory.edit();
+        editor.clear();
+        editor.commit();
+
+        // Clear the cost table (for now)
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
+
+    }
 
     // Method called when ADD button is clicked
 
@@ -165,11 +180,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateSpinnerCategories() {
 
-
+        // Customized spinner with spinner_categories xml layour
         spinner = (Spinner) findViewById(R.id.spinner);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_categories);
+
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
 

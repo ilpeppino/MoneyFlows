@@ -21,6 +21,8 @@ public final class FeedReaderContract {
     /* Inner class that defines the table contents
     You need to implement BaseColumns
     **/
+
+    // Table definition for the cost entries
     public static abstract class CostEntry implements BaseColumns {
         public static final String TABLE_NAME = "history";
         public static final String COLUMN_NAME_COST = "cost";
@@ -29,6 +31,7 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_DATE = "date";
 
     }
+
 
     public static abstract class Methods {
 

@@ -38,22 +38,31 @@
         android:paddingTop="16dp"
         />
 
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/tvCategoryColor"
+        android:layout_below="@id/etDescription"
+        android:background="@color/colorAccent"
+        />
+
+
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
+        android:layout_toRightOf="@id/tvCategoryColor"
+        android:layout_marginLeft="16dp"
         android:layout_below="@id/etDescription"
         android:paddingTop="16dp"
-        android:textAlignment="center"
-        />
-
-
+        android:textAlignment="center" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_add"
-        android:layout_below="@id/spinner"
+        android:layout_below="@id/tvCategoryColor"
         android:id="@+id/button"
         android:paddingTop="16dp"
         android:onClick="addCost"
