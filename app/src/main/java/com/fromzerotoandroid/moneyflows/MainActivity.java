@@ -149,14 +149,20 @@ public class MainActivity extends AppCompatActivity {
         Resources r = getResources();
         String[] cat = r.getStringArray(R.array.categories);
 
-        editor = colorCategory.edit();
+
         for (int i = 0; i < cat.length; i++) {
             String currentCategory = cat[i].toString();
-
+            editor = colorCategory.edit();
             editor.putInt(currentCategory, COLOR_PALETTE[i]);
-
+            Log.d("COLORS", "Category: " + currentCategory +
+                    " - Color: " + COLOR_PALETTE[i] +
+                    " - Alpha: " + Color.alpha(COLOR_PALETTE[i]) +
+                    " - Red: " + Color.red(COLOR_PALETTE[i]) +
+                    " - Green: " + Color.green(COLOR_PALETTE[i]) +
+                    " - Blue: " + Color.blue(COLOR_PALETTE[i]));
+            editor.commit();
         }
-        editor.commit();
+
 
         // Clear the cost table (for now)
         BackgroundTask backgroundTask = new BackgroundTask(this);
@@ -237,6 +243,8 @@ public class MainActivity extends AppCompatActivity {
         mRenderer.setZoomButtonsVisible(true);
         mRenderer.setStartAngle(90);
 
+        mRenderer.removeAllRenderers();
+
 //        CategoryColor categoryColor = new CategoryColor();
 //        arrColors = categoryColor.getColors(nrChildren);
 
@@ -256,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
 
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
                 renderer.setColor(colorCategory.getInt(currentCategory, 0));
+                Log.d("COLORS", "Category: " + currentCategory +
+                        " - Color: " + colorCategory.getInt(currentCategory, 0) +
+                        " - Alpha: " + Color.alpha(colorCategory.getInt(currentCategory, 0)) +
+                        " - Red: " + Color.red(colorCategory.getInt(currentCategory, 0)) +
+                        " - Green: " + Color.green(colorCategory.getInt(currentCategory, 0)) +
+                        " - Blue: " + Color.blue(colorCategory.getInt(currentCategory, 0)));
 
                 mRenderer.addSeriesRenderer(renderer);
 
