@@ -255,9 +255,11 @@ public class MainActivity extends AppCompatActivity {
                 colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
                 Log.d("COLORS", spinner.getAdapter().getItem(position).toString());
 
-                TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
-                tvColor.setBackgroundColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                // TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
+                // tvColor.setBackgroundColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 // ((TextView) parent.getChildAt(0)).setTextColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
+                parent.getChildAt(0).setBackgroundColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
 
             }
 
