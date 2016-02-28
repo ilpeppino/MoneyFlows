@@ -13,10 +13,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.achartengine.ChartFactory;
@@ -26,20 +28,33 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
+    // Only for testing purposes
     private boolean simulateFirstUse = true;
 
-    // Defines the SharedPreferences for keeping the values for each category
+
+    // SharedPreferences, editors and names definition
     public static final String VALUES_CATEGORY = "ValuesCategory";
-    public static final String NAMES_CATEGORY = "NamesCategory";
-    public static final String USERS_SETTINGS = "UserSettings";
+    private SharedPreferences valuesCategory;
+    private SharedPreferences.Editor editor_valuesCategory;
     public static final String COLORS_CATEGORY = "ColorsCategory";
+    private SharedPreferences colorCategory;
+    private SharedPreferences.Editor editor_colorCategory;
+    public static final String USERS_SETTINGS = "UserSettings";
+    private SharedPreferences usersSettings;
+    private SharedPreferences.Editor editor_usersSettings;
+
+    // Constants for logging tags
     public static final String TAG = "MainActivity";
+    public static final String TAG_COLORS = "COLORS";
+
+    // Array of constants colors for the categories
     public static final int[] COLOR_PALETTE = {
 
             Color.argb(255, 255, 0, 0),
@@ -55,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    // Information about names, values and colors of categories are defined here.
+    // It references to ListItems class in this main class
+    List<ListItems> listViewItems = new ArrayList<ListItems>();
+
     // Defines the spinner for selecting the category cost
     Spinner spinner;
     int nrChildren;
@@ -63,104 +82,112 @@ public class MainActivity extends AppCompatActivity {
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
-    private SharedPreferences.Editor editor;
-    private SharedPreferences usersSettings;
-    private SharedPreferences valuesCategory;
-    private SharedPreferences namesCategory;
-    private SharedPreferences colorCategory;
     private LinearLayout chart;
 
+    // Object references to cost and description in the main layout screen
     private EditText et_Cost, et_Description;
     private String mCost, mDescription;
 
-    // Array of colors used by graphical view to represent categories
-    private int[] arrColors = new int[20];
-    //    float[] arrayvaluecategories = new float[20];
-    private int accessnumber;
+    // it stores the category names
+    private String[] categoryNames;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        int accessnumber;
+
+        // Creates the layout and toolbar for the main layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        et_Cost = (EditText) findViewById(R.id.etCost);
-        et_Description = (EditText) findViewById(R.id.etDescription);
-
-
-        // Read the shared preferences
-        Log.d(TAG, "onCreate");
-        usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
-        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-        namesCategory = getSharedPreferences(NAMES_CATEGORY, Context.MODE_PRIVATE);
-        colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
-
-        // Checks if this the first time the app is accessed
-        accessnumber = usersSettings.getInt("accessnumber", 0);
-
-        // For first time usage simulation only, clean up the shared preferences and purge table
-        if (simulateFirstUse || accessnumber == 0) {
-
-            accessFirstTime();
-
-        }
-
-        // Populate the spinner with the categories
-        populateSpinnerCategories();
-
-
-        // Increment accessnumber
-        accessnumber += 1;
-        editor = usersSettings.edit();
-        editor.putInt("accessnumber", accessnumber);
-        editor.commit();
-
-        paintGraphics();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.showOverflowMenu();
+        toolbar.showOverflowMenu(); // NOTE: this method shows the menu on top-right corner
         setSupportActionBar(toolbar);
+        Log.d(TAG, "onCreate");
+
+        // gets all the categorynames from strings.xml
+        Resources r = getResources(); // NOTE: this method gets all the references to the resources defined in the /res directory
+        categoryNames = r.getStringArray(R.array.categories); // it reads from the string-array in the strings.xml
+
+        // Object reference to the cost and description text views
+        et_Cost = (EditText) findViewById(R.id.etCost);
+        et_Description = (EditText) findViewById(R.id.etDescription);
+
+        // Read the shared preferences and checks if this the first time the app is accessed
+        // For first time usage simulation only, clean up the shared preferences and purge table
+        usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
+        accessnumber = usersSettings.getInt("accessnumber", 0);
+        if (simulateFirstUse || accessnumber == 0) {
+            accessFirstTime();
+        }
+        accessnumber += 1;
+        editor_usersSettings = usersSettings.edit();
+        editor_usersSettings.putInt("accessnumber", accessnumber);
+        editor_usersSettings.commit();
+
+        // Populate the spinner with the categories, create the list of names, values and colors of
+        // the categories and draw the pie chart
+        populateSpinnerCategories();
+        populateListItems();
+        paintGraphics();
+
+    }
+
+    private void populateListItems() {
+
+        String lCatName, lCatValue, lCatColor;
+        ListItems listItem = new ListItems();
+
+        for (int i = 0; i < categoryNames.length; i++) {
+
+            String currCategory = categoryNames[i];
+            valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+            colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
 
 
+            listItem.cat_name = currCategory;
+            listItem.cat_value = valuesCategory.getString(currCategory, "");
+            listItem.cat_color = colorCategory.getInt(currCategory, 0);
+            listViewItems.add(i, listItem);
+
+            Log.d("LISTITEMS", listItem.cat_name + " " + listItem.cat_value + " " + listItem.cat_color + "\n");
+        }
     }
 
 
     private void accessFirstTime() {
 
         // Clear shared preferences
-        editor = usersSettings.edit();
-        editor.clear();
-        editor.commit();
+        usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
+        editor_usersSettings = usersSettings.edit();
+        editor_usersSettings.clear();
+        editor_usersSettings.commit();
 
-        editor = valuesCategory.edit();
-        editor.clear();
-        editor.commit();
+        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+        editor_valuesCategory = valuesCategory.edit();
+        editor_valuesCategory.clear();
+        editor_valuesCategory.commit();
 
-        editor = namesCategory.edit();
-        editor.clear();
-        editor.commit();
+        colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+        editor_colorCategory = colorCategory.edit();
+        editor_colorCategory.clear();
+        editor_colorCategory.commit();
 
-        // For colors, i clear what we have and repopulate with standard colors
-        editor = colorCategory.edit();
-        editor.clear();
-        editor.commit();
+        // For colors, repopulate with standard colors by reading the categories defined in the
+        // strings.xml and assign the colors from COLOR_PALETTE in sequence
+        for (int i = 0; i < categoryNames.length; i++) {
+            String currentCategory = categoryNames[i].toString();
+            editor_colorCategory.putInt(currentCategory, COLOR_PALETTE[i]);
+            editor_colorCategory.commit();
 
-        Resources r = getResources();
-        String[] cat = r.getStringArray(R.array.categories);
-
-
-        for (int i = 0; i < cat.length; i++) {
-            String currentCategory = cat[i].toString();
-            editor = colorCategory.edit();
-            editor.putInt(currentCategory, COLOR_PALETTE[i]);
-            Log.d("COLORS", "Category: " + currentCategory +
+            Log.d(TAG_COLORS, "Category: " + currentCategory +
                     " - Color: " + COLOR_PALETTE[i] +
                     " - Alpha: " + Color.alpha(COLOR_PALETTE[i]) +
                     " - Red: " + Color.red(COLOR_PALETTE[i]) +
                     " - Green: " + Color.green(COLOR_PALETTE[i]) +
                     " - Blue: " + Color.blue(COLOR_PALETTE[i]));
-            editor.commit();
         }
 
 
@@ -168,70 +195,84 @@ public class MainActivity extends AppCompatActivity {
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
 
-
     }
 
     // Method called when ADD button is clicked
-
     // PS: methods associated with click buttons or other user interaction defined in xml
-    // must be PUBLIC
+    // must be PUBLIC and View as parameter
 
     public void addCost(View v) {
 
+        // reads the values inputted in cost and description
         mCost = et_Cost.getText().toString();
         mDescription = et_Description.getText().toString();
 
-        if (!(mCost.equals(""))) {
+        // if the cost is not empty and contains only numbers
+        if (!(mCost.isEmpty()) && mCost.matches("[0-9]+")) {
 
-            // First of all, I save data in the SharedPreference
-
-            // Get the selected item from the spinner
+            // calculate the new value of the selected category in the Sharedpreferences
             Spinner s = (Spinner) findViewById(R.id.spinner);
             String selectedItem = s.getSelectedItem().toString();
-            // Retrieves the amount for the selected category
             valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
             float actualCost = valuesCategory.getFloat(selectedItem, 0);
-            // Updates the value for the selected category in the SharedPreferences
-            SharedPreferences.Editor editor = valuesCategory.edit();
             float updatedCost = actualCost + Float.parseFloat(mCost);
-            editor.putFloat(selectedItem, updatedCost);
-            editor.commit();
+
+            // Updates the value for the selected category in the SharedPreferences
+            editor_valuesCategory = valuesCategory.edit();
+            editor_valuesCategory.putFloat(selectedItem, updatedCost);
+            editor_valuesCategory.commit();
+
             // Refresh the graphical view
             paintGraphics();
 
-            // Insert this value in the table for the history
+            // Insert this value in the table for the history and execute method ADD_COST via doInBackground method in the backgroundtask
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
-            // The execute method trigger the doInBackground method in the backgroundtask
             backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, mCost, mDescription, selectedItem, date);
 
         } else {
-            Toast.makeText(this, "Please insert cost", Toast.LENGTH_LONG).show();
+
+            Toast.makeText(this, "Please insert cost", Toast.LENGTH_SHORT).show();
+
         }
 
 
     }
 
+
     private void populateSpinnerCategories() {
 
-        // Customized spinner with spinner_categories xml layour
+        // Customized spinner with spinner_categories xml layout
         spinner = (Spinner) findViewById(R.id.spinner);
-
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_categories);
-
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+        // IMPORTANT!!!
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            // it sets the background color of the textview color beside the spinner
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+                Log.d("COLORS", spinner.getAdapter().getItem(position).toString());
 
+                TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
+                tvColor.setBackgroundColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                // ((TextView) parent.getChildAt(0)).setTextColor(colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
+
 
     private void paintGraphics() {
 
-
         nrChildren = spinner.getCount();
 
+        // sets graphical properties for the renderer
         mRenderer.setApplyBackgroundColor(false);
         // mRenderer.setBackgroundColor(Color.argb(255, 255, 255, 255));
         mRenderer.setChartTitleTextSize(20);
@@ -243,17 +284,19 @@ public class MainActivity extends AppCompatActivity {
         mRenderer.setZoomButtonsVisible(true);
         mRenderer.setStartAngle(90);
 
+        // it removes all the existing renderers
         mRenderer.removeAllRenderers();
 
 //        CategoryColor categoryColor = new CategoryColor();
 //        arrColors = categoryColor.getColors(nrChildren);
 
+        valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+        colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+
         mSeries.clear();
         for (int i = 0; i < nrChildren; i++) {
 
-            // Retrieves the category from the spinner
-            valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+            // Retrieves the values of each category from the spinner
             String currentCategory = spinner.getAdapter().getItem(i).toString();
             float currentValue = valuesCategory.getFloat(currentCategory, 0);
 
@@ -382,6 +425,15 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //
 //    }
+
+    class ListItems {
+
+        public String cat_name, cat_value;
+        public int cat_color;
+
+    }
+
+
 }
 
 
