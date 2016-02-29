@@ -27,7 +27,7 @@ SETTINGS
 PAINT PIE
 - Read values from db and remove shared preferences
 
-- onClose, save data on SharedPReferences
+
 
 
 
@@ -40,3 +40,4 @@ DONE
 - Add category to the table
 - format date in layout as dd-MM-yyyy
 - start with date (from newest to oldest)
+- Accept . and , as decimal separator

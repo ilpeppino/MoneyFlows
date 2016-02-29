@@ -205,8 +205,13 @@ public class MainActivity extends AppCompatActivity {
         mCost = et_Cost.getText().toString();
         mDescription = et_Description.getText().toString();
 
-        // if the cost is not empty and contains only numbers
-        if (!(mCost.isEmpty()) && mCost.matches("[0-9]+")) {
+
+        // if the cost is not empty and contains only numbers155
+
+        // ^(?:[1-9]\d*|0)?(?:\.\d+)?$
+        // [0-9]+
+        if (!(mCost.isEmpty()) && mCost.matches("^(?:[1-9]\\d*|0)?(?:\\.\\d+)?$")) {
+
 
             // calculate the new value of the selected category in the Sharedpreferences
             Spinner s = (Spinner) findViewById(R.id.spinner);
