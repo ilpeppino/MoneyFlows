@@ -5,36 +5,40 @@
 
     <TextView
         android:id="@+id/customlistiem_Category"
-        android:layout_width="50sp"
+        android:layout_width="wrap_content"
+        android:layout_weight="2"
         android:layout_height="36sp"
-        android:layout_weight="1"
+        android:paddingRight="10sp"
         android:textSize="12sp"
         android:text="Category" />
 
     <TextView
         android:id="@+id/customlistiem_Cost"
-        android:layout_width="100sp"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_height="36sp"
-        android:layout_weight="2"
+        android:paddingRight="10sp"
         android:textSize="12sp"
         android:background="@color/customlistitem_Cost"
         android:text="Cost" />
 
     <TextView
         android:id="@+id/customlistiem_Description"
-        android:layout_width="250sp"
+        android:layout_width="wrap_content"
+        android:layout_weight="2"
         android:layout_height="36sp"
-        android:layout_weight="3"
+        android:paddingRight="10sp"
         android:textSize="12sp"
         android:text="Description" />
 
 
     <TextView
         android:id="@+id/customlistiem_Date"
-        android:layout_width="110sp"
-        android:layout_height="36sp"
+        android:layout_width="wrap_content"
         android:layout_weight="1"
+        android:layout_height="36sp"
         android:textSize="12sp"
+        android:paddingRight="10sp"
         android:background="@color/customlistitem_Date"
         android:text="Date" />
 

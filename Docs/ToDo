@@ -27,6 +27,8 @@ SETTINGS
 PAINT PIE
 - Read values from db and remove shared preferences
 
+- onClose, save data on SharedPReferences
+
 
 
 
