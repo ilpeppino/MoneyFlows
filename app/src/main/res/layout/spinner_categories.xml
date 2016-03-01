@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
-    android:layout_width="250sp"
+    android:layout_width="150sp"
     android:layout_height="40sp"
     android:textSize="16sp"
-    android:paddingLeft="20sp"
-    android:paddingRight="20sp" />
+    android:gravity="center" />
 
 

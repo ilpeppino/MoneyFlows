@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     // Only for testing purposes
-    private boolean simulateFirstUse = false;
+    private boolean simulateFirstUse = true;
 
     // Number of categories defined in strings.xml
     private static final int TOTALNRCATEGORIES = 6;
@@ -71,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
             Color.argb(255, 0, 0, 0),
 
     };
+
+    // Array of icons per category
+    public int[] categoryIcons = {R.drawable.groceries, R.drawable.family, R.drawable.entertainment, R.drawable.car, R.drawable.health, R.drawable.pets};
 
     // Information about names, values and colors of categories are defined here.
     // It references to ListItems class in this main class
@@ -114,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
         // gets all the categorynames from strings.xml
         Resources r = getResources(); // NOTE: this method gets all the references to the resources defined in the /res directory
         array_categoryNames = r.getStringArray(R.array.categories); // it reads from the string-array in the strings.xml
+
+        ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
+        imgIconCategory.setImageResource(categoryIcons[0]);
 
         // Object reference to the cost and description text views
         et_Cost = (EditText) findViewById(R.id.etCost);
@@ -269,6 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 // ((TextView) parent.getChildAt(0)).setTextColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
                 parent.getChildAt(0).setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
+                imgIconCategory.setImageResource(categoryIcons[position]);
 
             }
 
@@ -385,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.resetall) {
             Intent i = new Intent(getApplicationContext(), ResetAll.class);
             startActivity(i);
+            paintGraphics();
             return true;
         }
 

@@ -42,19 +42,35 @@
     <!--<TextView-->
     <!--android:layout_width="50dp"-->
     <!--android:layout_height="50dp"-->
-    <!--android:id="@+id/tvCategoryColor"-->
+    <!--android:id="@+id/tvIconCategory"-->
     <!--android:layout_below="@id/etDescription"-->
-    <!--android:background="@color/colorAccent"-->
     <!--/>-->
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/imgIconCategory"
+        android:layout_below="@id/etDescription"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
 
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
+        android:layout_marginTop="16dp"
         android:layout_below="@id/etDescription"
+        android:layout_alignBottom="@id/imgIconCategory"
+        android:layout_toRightOf="@id/imgIconCategory"
         android:paddingTop="8dp"
         android:textAlignment="center" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etDescription"
+        android:layout_toRightOf="@id/spinner" />
 
     <Button
         android:layout_width="wrap_content"
@@ -64,6 +80,7 @@
         android:id="@+id/button"
         android:paddingTop="16dp"
         android:onClick="addCost"
+        android:layout_marginTop="16dp"
         />
 
 

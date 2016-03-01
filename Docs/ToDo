@@ -3,9 +3,7 @@ TO-DO
 CATEGORIES AND GRAPH
     - Set default categories
     - Move categories from string.xml to SharedPreferences
-    - Assign static colors to category
     - Let user change category color
-    - Check how to hover on the graph and pie slice pop up
 
 
 COST HISTORY
@@ -24,20 +22,3 @@ SETTINGS
     - Reset data every x days / day in a month (but keep history)
 
 
-PAINT PIE
-- Read values from db and remove shared preferences
-
-
-
-
-
-
-___________________
-DONE
-
-- Method names (Actions on db) to define as private static final in the contract
-- Add a Reset data in toolbar menu
-- Add category to the table
-- format date in layout as dd-MM-yyyy
-- start with date (from newest to oldest)
-- Accept . and , as decimal separator
