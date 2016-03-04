@@ -1,13 +1,13 @@
 TO-DO
 
 CATEGORIES AND GRAPH
-    - Set default categories
+
     - Move categories from string.xml to SharedPreferences
     - Let user change category color
+    - Fix colors in colors
 
 
 COST HISTORY
-    - add icon for categories
     - remove description
     - sorting
 

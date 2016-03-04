@@ -7,7 +7,7 @@
         android:id="@+id/customlistiem_Category"
         android:layout_width="100sp"
         android:layout_height="36sp"
-
+        android:gravity="center_vertical"
         android:textSize="12sp"
         android:text="Category" />
 
@@ -15,7 +15,7 @@
         android:id="@+id/customlistiem_Cost"
         android:layout_width="60sp"
         android:layout_height="36sp"
-
+        android:gravity="center_vertical"
         android:textSize="12sp"
         android:background="@color/customlistitem_Cost"
         android:text="Cost" />
@@ -27,7 +27,7 @@
 
         android:textSize="12sp"
         android:text="Description" />
-
+    android:gravity="center_vertical"
 
     <TextView
         android:id="@+id/customlistiem_Date"
@@ -35,7 +35,7 @@
 
         android:layout_height="36sp"
         android:textSize="12sp"
-
+        android:gravity="center_vertical"
         android:background="@color/customlistitem_Date"
         android:text="Date" />
 

@@ -1,0 +1,43 @@
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/header_Category"
+        android:layout_width="100sp"
+        android:layout_height="36sp"
+
+        android:text="Category"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/header_Cost"
+        android:layout_width="60sp"
+        android:layout_height="36sp"
+
+        android:background="@color/customlistitem_Cost"
+        android:text="Cost"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/header_Description"
+        android:layout_width="130sp"
+        android:layout_height="36sp"
+
+        android:text="Description"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/header_Date"
+        android:layout_width="80sp"
+
+        android:layout_height="36sp"
+        android:background="@color/customlistitem_Date"
+
+        android:text="Date"
+        android:textSize="12sp" />
+
+</LinearLayout>

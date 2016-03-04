@@ -8,4 +8,12 @@
     <color name="customlistitem_Cost">#FFFFFFFF</color>
 
 
+    <color name="Groceries">#ffff0000</color>
+    <color name="Family">#ff00ff00</color>
+    <color name="Leisure">#ff0000ff</color>
+    <color name="Transportation">#ff9900</color>
+    <color name="Health">#ff77ffff</color>
+    <color name="Pets">#ff999999</color>
+
+
 </resources>

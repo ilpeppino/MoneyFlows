@@ -58,23 +58,24 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG_COLORS = "Colors";
 
     // Array of constants colors for the categories
-    public static final int[] COLOR_PALETTE = {
-
-            Color.argb(255, 255, 0, 0),
-            Color.argb(255, 0, 255, 0),
-            Color.argb(255, 0, 0, 255),
-            Color.argb(255, 128, 0, 128),
-            Color.argb(255, 0, 128, 128),
-            Color.argb(255, 128, 128, 128),
-            Color.argb(255, 200, 128, 128),
-            Color.argb(255, 255, 128, 255),
-            Color.argb(255, 128, 0, 255),
-            Color.argb(255, 0, 0, 0),
-
-    };
+//    public static final int[] COLOR_PALETTE = {
+//
+//            Color.argb(255, 255, 0, 0),
+//            Color.argb(255, 0, 255, 0),
+//            Color.argb(255, 0, 0, 255),
+//            Color.argb(255, 128, 0, 128),
+//            Color.argb(255, 0, 128, 128),
+//            Color.argb(255, 128, 128, 128),
+//            Color.argb(255, 200, 128, 128),
+//            Color.argb(255, 255, 128, 255),
+//            Color.argb(255, 128, 0, 255),
+//            Color.argb(255, 0, 0, 0),
+//
+//    };
 
     // Array of icons per category
     public int[] categoryIcons = {R.drawable.groceries, R.drawable.family, R.drawable.entertainment, R.drawable.car, R.drawable.health, R.drawable.pets};
+    public int[] categoryColors = {R.color.Groceries, R.color.Family, R.color.Leisure, R.color.Transportation, R.color.Health, R.color.Pets};
 
     // Information about names, values and colors of categories are defined here.
     // It references to ListItems class in this main class
@@ -184,15 +185,15 @@ public class MainActivity extends AppCompatActivity {
         // strings.xml and assign the colors from COLOR_PALETTE in sequence
         for (int i = 0; i < array_categoryNames.length; i++) {
             String currentCategory = array_categoryNames[i].toString();
-            editor_colorCategory.putInt(currentCategory, COLOR_PALETTE[i]);
+            editor_colorCategory.putInt(currentCategory, categoryColors[i]);
             editor_colorCategory.commit();
 
             Log.d(TAG_COLORS, "Category: " + currentCategory +
-                    " - Color: " + COLOR_PALETTE[i] +
-                    " - Alpha: " + Color.alpha(COLOR_PALETTE[i]) +
-                    " - Red: " + Color.red(COLOR_PALETTE[i]) +
-                    " - Green: " + Color.green(COLOR_PALETTE[i]) +
-                    " - Blue: " + Color.blue(COLOR_PALETTE[i]));
+                    " - Color: " + categoryColors[i] +
+                    " - Alpha: " + Color.alpha(categoryColors[i]) +
+                    " - Red: " + Color.red(categoryColors[i]) +
+                    " - Green: " + Color.green(categoryColors[i]) +
+                    " - Blue: " + Color.blue(categoryColors[i]));
         }
 
 
@@ -275,7 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 // tvColor.setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 // ((TextView) parent.getChildAt(0)).setTextColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
-                parent.getChildAt(0).setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                // parent.getChildAt(0).setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
+                parent.getChildAt(0).setBackgroundResource(categoryColors[position]);
                 ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
                 imgIconCategory.setImageResource(categoryIcons[position]);
 
@@ -318,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
             String currentCategory = array_categoryNames[i].toString();
             // float currentValue = sharedpref_valuesCategory.getFloat(currentCategory, 0);
             float currentValue = array_categoryValues[i];
+            int currentColor = sharedpref_colorCategory.getInt(currentCategory, 0);
 
 
             if (currentValue > 0) {

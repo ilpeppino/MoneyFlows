@@ -23,13 +23,17 @@ public class HistoryList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.content_history_list);
 
         Intent i = getIntent();
 
         // result will contain the result of the query. It must be defined as ListArray
         List<ListViewItem> listViewItems = new ArrayList<ListViewItem>();
 
-
+        // Inflate header layout
+//        ListView listView = (ListView) findViewById(R.id.listView);
+//        ViewGroup header_history_list = (ViewGroup) getLayoutInflater().inflate(R.layout.header_list_item, listView, false);
+//        listView.addHeaderView(header_history_list);
 
         // Here the database is queried and returns the values from db in result
         // Best practice is to use try-catch
@@ -70,10 +74,10 @@ public class HistoryList extends AppCompatActivity {
             Log.e("History", "Error during database processing");
         }
 
-        setContentView(R.layout.content_history_list);
-        ListView listview = (ListView) findViewById(R.id.listView);
+
+        ListView listview = (ListView) findViewById(R.id.listView); // content_history_list.xml
 //       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
-        listview.setAdapter(new CustomAdapter(this, listViewItems));
+        listview.setAdapter(new CustomAdapterHistoryList(this, listViewItems));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbarlist);
         toolbar.showOverflowMenu();

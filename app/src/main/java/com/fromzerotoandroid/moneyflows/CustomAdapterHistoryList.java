@@ -14,14 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomAdapterHistoryList extends BaseAdapter {
 
     List<ListViewItem> result = new ArrayList<>();
     Context context;
-    int[] imageId;
     private static LayoutInflater inflater = null;
 
-    public CustomAdapter(HistoryList historyList, List<ListViewItem> result) {
+    public CustomAdapterHistoryList(HistoryList historyList, List<ListViewItem> result) {
         // TODO Auto-generated constructor stub
 
         context = historyList;

@@ -64,13 +64,8 @@
         android:layout_alignBottom="@id/imgIconCategory"
         android:layout_toRightOf="@id/imgIconCategory"
         android:paddingTop="8dp"
-        android:textAlignment="center" />
-
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/etDescription"
-        android:layout_toRightOf="@id/spinner" />
+        android:textAlignment="center"
+        android:cacheColorHint="#00000000" />
 
     <Button
         android:layout_width="wrap_content"
