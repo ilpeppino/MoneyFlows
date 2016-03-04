@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
@@ -74,8 +75,18 @@ public class MainActivity extends AppCompatActivity {
 //    };
 
     // Array of icons per category
-    public int[] categoryIcons = {R.drawable.groceries, R.drawable.family, R.drawable.entertainment, R.drawable.car, R.drawable.health, R.drawable.pets};
-    public int[] categoryColors = {R.color.Groceries, R.color.Family, R.color.Leisure, R.color.Transportation, R.color.Health, R.color.Pets};
+    public int[] categoryIcons = {R.drawable.groceries,
+            R.drawable.family,
+            R.drawable.entertainment,
+            R.drawable.car,
+            R.drawable.health,
+            R.drawable.pets};
+    public int[] categoryColors = {R.color.Groceries,
+            R.color.Family,
+            R.color.Leisure,
+            R.color.Transportation,
+            R.color.Health,
+            R.color.Pets};
 
     // Information about names, values and colors of categories are defined here.
     // It references to ListItems class in this main class
@@ -185,15 +196,16 @@ public class MainActivity extends AppCompatActivity {
         // strings.xml and assign the colors from COLOR_PALETTE in sequence
         for (int i = 0; i < array_categoryNames.length; i++) {
             String currentCategory = array_categoryNames[i].toString();
-            editor_colorCategory.putInt(currentCategory, categoryColors[i]);
+            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
+            editor_colorCategory.putInt(currentCategory, currentColor);
             editor_colorCategory.commit();
 
             Log.d(TAG_COLORS, "Category: " + currentCategory +
-                    " - Color: " + categoryColors[i] +
-                    " - Alpha: " + Color.alpha(categoryColors[i]) +
-                    " - Red: " + Color.red(categoryColors[i]) +
-                    " - Green: " + Color.green(categoryColors[i]) +
-                    " - Blue: " + Color.blue(categoryColors[i]));
+                    " - Color: " + currentColor +
+                    " - Alpha: " + Color.alpha(currentColor) +
+                    " - Red: " + Color.red(currentColor) +
+                    " - Green: " + Color.green(currentColor) +
+                    " - Blue: " + Color.blue(currentColor));
         }
 
 
