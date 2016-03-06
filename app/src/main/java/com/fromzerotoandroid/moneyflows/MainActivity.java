@@ -1,5 +1,6 @@
 package com.fromzerotoandroid.moneyflows;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +38,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     // Only for testing purposes
-    private boolean simulateFirstUse = true;
+    private boolean simulateFirstUse = false;
 
     // Number of categories defined in strings.xml
     private static final int TOTALNRCATEGORIES = 6;
@@ -110,12 +111,14 @@ public class MainActivity extends AppCompatActivity {
     private String[] array_categoryNames = new String[TOTALNRCATEGORIES];
     private float[] array_categoryValues = new float[TOTALNRCATEGORIES];
     private int[] array_categoryColors = new int[TOTALNRCATEGORIES];
+    int accessnumber;
 
+    public static final int REQUEST_CODE_RESET_ALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        int accessnumber;
+
 
         // Creates the layout and toolbar for the main layout
         super.onCreate(savedInstanceState);
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         Resources r = getResources(); // NOTE: this method gets all the references to the resources defined in the /res directory
         array_categoryNames = r.getStringArray(R.array.categories); // it reads from the string-array in the strings.xml
 
+        // Set the icon to Groceries (since that's the first time to be shown in the spinner)
         ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
         imgIconCategory.setImageResource(categoryIcons[0]);
 
@@ -145,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
         if (simulateFirstUse || accessnumber == 0) {
             accessFirstTime();
         }
-        accessnumber += 1;
+
         editor_usersSettings = sharedpref_usersSettings.edit();
-        editor_usersSettings.putInt("accessnumber", accessnumber);
+        editor_usersSettings.putInt("accessnumber", accessnumber + 1);
         editor_usersSettings.commit();
 
         // Populate the spinner with the categories, create the list of names, values and colors of
@@ -155,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
         populateArrays();
         populateSpinnerCategories();
         paintGraphics();
+
+        accessnumber += 1;
 
     }
 
@@ -176,42 +182,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void accessFirstTime() {
 
-        // Clear shared preferences
-        sharedpref_usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
-        editor_usersSettings = sharedpref_usersSettings.edit();
-        editor_usersSettings.clear();
-        editor_usersSettings.commit();
+//        // Clear shared preferences
+//        sharedpref_usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
+//        editor_usersSettings = sharedpref_usersSettings.edit();
+//        editor_usersSettings.clear();
+//        editor_usersSettings.commit();
 
         sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
         editor_valuesCategory = sharedpref_valuesCategory.edit();
         editor_valuesCategory.clear();
         editor_valuesCategory.commit();
 
-        sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
-        editor_colorCategory = sharedpref_colorCategory.edit();
-        editor_colorCategory.clear();
-        editor_colorCategory.commit();
-
-        // For colors, repopulate with standard colors by reading the categories defined in the
-        // strings.xml and assign the colors from COLOR_PALETTE in sequence
-        for (int i = 0; i < array_categoryNames.length; i++) {
-            String currentCategory = array_categoryNames[i].toString();
-            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
-            editor_colorCategory.putInt(currentCategory, currentColor);
-            editor_colorCategory.commit();
-
-            Log.d(TAG_COLORS, "Category: " + currentCategory +
-                    " - Color: " + currentColor +
-                    " - Alpha: " + Color.alpha(currentColor) +
-                    " - Red: " + Color.red(currentColor) +
-                    " - Green: " + Color.green(currentColor) +
-                    " - Blue: " + Color.blue(currentColor));
-        }
+//        sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+//        editor_colorCategory = sharedpref_colorCategory.edit();
+//        editor_colorCategory.clear();
+//        editor_colorCategory.commit();
+//
+//        // For colors, repopulate with standard colors by reading the categories defined in the
+//        // strings.xml and assign the colors from categoryColor in sequence.
+//        // I use ContextCompat.getColor because of a problem with color visualization in 4.4.2
+//        for (int i = 0; i < array_categoryNames.length; i++) {
+//            String currentCategory = array_categoryNames[i].toString();
+//            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
+//            editor_colorCategory.putInt(currentCategory, currentColor);
+//            editor_colorCategory.commit();
+//
+//            Log.d(TAG_COLORS, "Category: " + currentCategory +
+//                    " - Color: " + currentColor +
+//                    " - Alpha: " + Color.alpha(currentColor) +
+//                    " - Red: " + Color.red(currentColor) +
+//                    " - Green: " + Color.green(currentColor) +
+//                    " - Blue: " + Color.blue(currentColor));
+//        }
 
 
         // Clear the cost table (for now)
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
+
 
     }
 
@@ -237,12 +245,13 @@ public class MainActivity extends AppCompatActivity {
             Spinner s = (Spinner) findViewById(R.id.spinner);
             String selectedItem = s.getSelectedItem().toString();
             // sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+            // Get the index from spinner. so i can reference to color and vsalue
+            // for that category
             index = Arrays.asList(array_categoryNames).indexOf(selectedItem);
 
+            // calculate updated cost
             float actualCost = Float.valueOf(array_categoryValues[index]);
             float updatedCost = actualCost + Float.parseFloat(mCost);
-
-
             Log.d("LISTITEMS", "Selected item: " + selectedItem + " at index " + index + " with original value " + actualCost + " and updated to " + updatedCost);
 
             // Updates the value for the selected category in the SharedPreferences
@@ -281,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             // it sets the background color of the textview color beside the spinner
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+                // sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
                 Log.d(TAG_COLORS, spinner.getAdapter().getItem(position).toString());
 
                 // TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
@@ -332,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
             String currentCategory = array_categoryNames[i].toString();
             // float currentValue = sharedpref_valuesCategory.getFloat(currentCategory, 0);
             float currentValue = array_categoryValues[i];
-            int currentColor = sharedpref_colorCategory.getInt(currentCategory, 0);
+            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
 
 
             if (currentValue > 0) {
@@ -340,13 +349,13 @@ public class MainActivity extends AppCompatActivity {
                 mSeries.add(currentCategory + " " + currentValue, currentValue);
 
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-                renderer.setColor(sharedpref_colorCategory.getInt(currentCategory, 0));
+                renderer.setColor(currentColor);
                 Log.d("COLORS", "Category: " + currentCategory +
-                        " - Color: " + sharedpref_colorCategory.getInt(currentCategory, 0) +
-                        " - Alpha: " + Color.alpha(sharedpref_colorCategory.getInt(currentCategory, 0)) +
-                        " - Red: " + Color.red(sharedpref_colorCategory.getInt(currentCategory, 0)) +
-                        " - Green: " + Color.green(sharedpref_colorCategory.getInt(currentCategory, 0)) +
-                        " - Blue: " + Color.blue(sharedpref_colorCategory.getInt(currentCategory, 0)));
+                        " - Color: " + currentColor +
+                        " - Alpha: " + Color.alpha(currentColor) +
+                        " - Red: " + Color.red(currentColor) +
+                        " - Green: " + Color.green(currentColor) +
+                        " - Blue: " + Color.blue(currentColor));
 
                 mRenderer.addSeriesRenderer(renderer);
 
@@ -408,8 +417,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.resetall) {
             Intent i = new Intent(getApplicationContext(), ResetAll.class);
-            startActivity(i);
-            paintGraphics();
+            startActivityForResult(i, REQUEST_CODE_RESET_ALL);
             return true;
         }
 
@@ -423,8 +431,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_RESET_ALL) {
+            if (resultCode == Activity.RESULT_OK) {
+                accessFirstTime();
+                populateArrays();
+                populateSpinnerCategories();
+
+                paintGraphics();
+
+            } else {
+
+            }
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         // drawPieChart();
 
     }

@@ -3,6 +3,7 @@ package com.fromzerotoandroid.moneyflows;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 //The 4 steps
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 public class BackgroundTask extends AsyncTask<String, Void, String> {
 
+    public static final String TAG = "Background task";
+
     Context c;
     String mCost, mDescription, mCategory, mDate;
 
@@ -34,11 +37,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
+
+        Log.d(TAG, "BackgroundTask: onPreExecute");
         super.onPreExecute();
     }
 
     @Override
     protected String doInBackground(String... params) {
+
+        Log.d(TAG, "BackgroundTask: doInBackground");
 
         // Get the method name as first parameter
         String method = params[0];
@@ -48,6 +55,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         switch (method) {
             // Add the cost in the db
             case FeedReaderContract.Methods.ADD_COST:
+
+                Log.d(TAG, "BackgroundTask: Database operation: ADD_COST");
 
                 mCost = params[1];
                 mDescription = params[2];
@@ -62,6 +71,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 break;
 
             case FeedReaderContract.Methods.ERASE_ALL:
+
+                Log.d(TAG, "BackgroundTask: Database operation: RESET_ALL");
+
                 // Purge the table from data
                 SQLiteDatabase dbReset = dbOperations.getWritableDatabase();
                 dbOperations.purgeTable(dbReset, FeedReaderContract.CostEntry.TABLE_NAME);
@@ -76,12 +88,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onProgressUpdate(Void... values) {
+
+        Log.d(TAG, "BackgroundTask: onProgressUpdate");
         super.onProgressUpdate(values);
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(c, result, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "BackgroundTask: onPostExecute");
+        Toast.makeText(c, result, Toast.LENGTH_SHORT).show();
     }
 
 

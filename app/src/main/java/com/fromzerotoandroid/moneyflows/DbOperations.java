@@ -28,7 +28,7 @@ public class DbOperations extends SQLiteOpenHelper {
     public DbOperations(Context context) {
 
         super(context, DB_NAME, null, DB_VERSION);
-        Log.d(TAG, "Database created...");
+
     }
 
     // on Create and onUpgrade must be defined

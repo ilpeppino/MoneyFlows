@@ -4,14 +4,15 @@ CATEGORIES AND GRAPH
 
     - Move categories from string.xml to SharedPreferences
     - Let user change category color
-    - Fix colors in colors
+
 
 
 COST HISTORY
     - remove description
     - sorting
 
-
+RESETALL
+ - chart is not redrawn and it's not empty
 
 RESOURCE OPTIMIZATION
     - dont open db if it's already created
