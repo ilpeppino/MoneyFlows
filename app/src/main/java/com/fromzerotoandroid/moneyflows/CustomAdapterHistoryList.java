@@ -1,6 +1,7 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 
 
 public class CustomAdapterHistoryList extends BaseAdapter {
+
+    public static final String TAG = "Class: CustomAdapter";
 
     List<ListViewItem> result = new ArrayList<>();
     Context context;
@@ -32,18 +35,22 @@ public class CustomAdapterHistoryList extends BaseAdapter {
 
     @Override
     public int getCount() {
+        Log.d(TAG, "Calling getCount method...Return: " + result.size());
+
         // TODO Auto-generated method stub
         return result.size();
     }
 
     @Override
     public Object getItem(int position) {
+        Log.d(TAG, "Calling getItem method...Return: " + position);
         // TODO Auto-generated method stub
         return position;
     }
 
     @Override
     public long getItemId(int position) {
+        Log.d(TAG, "Calling getItemId method...Return: " + position);
         // TODO Auto-generated method stub
         return position;
     }
@@ -54,9 +61,11 @@ public class CustomAdapterHistoryList extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        Log.d(TAG, "Calling getView...Position: " + position);
         // TODO Auto-generated method stub
         Holder holder = new Holder();
         View rowView;
+
         rowView = inflater.inflate(R.layout.customlistitem, null);
 
         ListViewItem item = result.get(position);
@@ -73,7 +82,7 @@ public class CustomAdapterHistoryList extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked " + result.get(position), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "You Clicked " + result.get(position).category.toString() + " " + result.get(position).cost.toString() + " " + result.get(position).date.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         return rowView;

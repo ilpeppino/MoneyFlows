@@ -10,7 +10,7 @@ import android.view.View;
 
 public class ResetAll extends AppCompatActivity {
 
-    public final static String TAG = "RESETALL";
+    public final static String TAG = "Class: ResetAll";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

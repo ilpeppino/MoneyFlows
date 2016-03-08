@@ -11,7 +11,8 @@ import android.util.Log;
  */
 public class DbOperations extends SQLiteOpenHelper {
 
-    private static final String TAG = "Database operations";
+
+    private static final String TAG = "Class: DbOperations";
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "cost_history.db";
 
@@ -36,7 +37,7 @@ public class DbOperations extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(CREATE_TABLE);
-        Log.d(TAG, "Table created...");
+        Log.d(TAG, "Creating table...");
     }
 
     public void addRowToTable(SQLiteDatabase db, String cost, String desc, String category, String date) {
@@ -51,6 +52,7 @@ public class DbOperations extends SQLiteOpenHelper {
 
     public void purgeTable(SQLiteDatabase db, String tableNameToPurge) {
 
+        Log.d(TAG, "Table purged");
         db.delete(tableNameToPurge, null, null);
 
     }

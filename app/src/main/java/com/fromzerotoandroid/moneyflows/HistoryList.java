@@ -19,14 +19,16 @@ import java.util.List;
 public class HistoryList extends AppCompatActivity {
 
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
+    public static final String TAG = "Class: HistoryList";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_history_list);
 
         Intent i = getIntent();
-
+        Log.d(TAG, "Receving intent...");
         // result will contain the result of the query. It must be defined as ListArray
         List<ListViewItem> listViewItems = new ArrayList<ListViewItem>();
 
@@ -108,5 +110,6 @@ public class HistoryList extends AppCompatActivity {
         public String cost, date, category;
 
     }
+
 
 }

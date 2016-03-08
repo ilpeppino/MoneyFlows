@@ -38,7 +38,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     // Only for testing purposes
-    private boolean simulateFirstUse = false;
+    private boolean simulateFirstUse = true;
 
     // Number of categories defined in strings.xml
     private static final int TOTALNRCATEGORIES = 6;
@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor_usersSettings;
 
     // Constants for logging tags
-    public static final String TAG = "MainActivity";
-    public static final String TAG_COLORS = "Colors";
+    public static final String TAG = "Class: MainActivity";
 
     // Array of constants colors for the categories
 //    public static final int[] COLOR_PALETTE = {
@@ -166,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateArrays() {
 
+        Log.d(TAG, "Populating arrays...");
+
         for (int i = 0; i < array_categoryNames.length; i++) {
 
             String currCategory = array_categoryNames[i];
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             array_categoryValues[i] = sharedpref_valuesCategory.getFloat(currCategory, 0);
             array_categoryColors[i] = sharedpref_colorCategory.getInt(currCategory, 0);
 
-            Log.d("LISTITEMS", array_categoryNames[i] + " " + array_categoryValues[i] + " " + array_categoryColors[i] + "\n");
+            Log.d(TAG, "Item " + i + ": " + array_categoryNames[i] + " " + array_categoryValues[i] + " " + array_categoryColors[i] + "\n");
         }
     }
 
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
 
+        Log.d(TAG, "Database and values cleared");
 
     }
 
@@ -228,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
     // must be PUBLIC and View as parameter
 
     public void addCost(View v) {
+
+        Log.d(TAG, "Adding cost...");
 
         // reads the values inputted in cost and description
         mCost = et_Cost.getText().toString();
@@ -252,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             // calculate updated cost
             float actualCost = Float.valueOf(array_categoryValues[index]);
             float updatedCost = actualCost + Float.parseFloat(mCost);
-            Log.d("LISTITEMS", "Selected item: " + selectedItem + " at index " + index + " with original value " + actualCost + " and updated to " + updatedCost);
+            Log.d(TAG, "Selected item: " + selectedItem + " at index " + index + " with original value " + actualCost + " and updated to " + updatedCost);
 
             // Updates the value for the selected category in the SharedPreferences
             array_categoryValues[index] = updatedCost;
@@ -280,6 +284,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateSpinnerCategories() {
 
+        Log.d(TAG, "Populating spinner with items...");
+
         // Customized spinner with spinner_categories xml layout
         spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_categories);
@@ -291,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
             // it sets the background color of the textview color beside the spinner
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
-                Log.d(TAG_COLORS, spinner.getAdapter().getItem(position).toString());
+                Log.d(TAG, "Spinner - OnItemSelectedListener: " + spinner.getAdapter().getItem(position).toString());
 
                 // TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
                 // tvColor.setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
@@ -312,6 +318,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void paintGraphics() {
+
+        Log.d(TAG, "Painting graphics...");
 
         // sets graphical properties for the renderer
         mRenderer.setApplyBackgroundColor(false);
@@ -368,6 +376,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void drawPieChart() {
 
+        Log.d(TAG, "Drawing pie chart...");
+
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
             mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
@@ -387,6 +397,7 @@ public class MainActivity extends AppCompatActivity {
     // it's possible to define custom options.
     // Dependencies: xml file in the menu folder, accessible via R.menu command
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "Inflating toolbar...");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actions_toolbar, menu);
         return true;
@@ -409,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
             // the class of the activity to be called. With startActivity, the onCreate
             // on the called activity is called.
             // Remember to specify a finish() to terminate the ativity when it's finished
+            Log.d(TAG, "Clicked about...");
             Intent i = new Intent(getApplicationContext(), AboutActivity.class);
             startActivity(i);
             // finish();
@@ -416,12 +428,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (id == R.id.resetall) {
+            Log.d(TAG, "Clicked reset all...");
             Intent i = new Intent(getApplicationContext(), ResetAll.class);
             startActivityForResult(i, REQUEST_CODE_RESET_ALL);
             return true;
         }
 
         if (id == R.id.history) {
+            Log.d(TAG, "Clicked history...");
             Intent i = new Intent(getApplicationContext(), HistoryList.class);
             startActivity(i);
             return true;
@@ -433,6 +447,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d(TAG, "Receiving intent back...");
 
         if (requestCode == REQUEST_CODE_RESET_ALL) {
             if (resultCode == Activity.RESULT_OK) {

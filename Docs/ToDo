@@ -2,7 +2,6 @@ TO-DO
 
 CATEGORIES AND GRAPH
 
-    - Move categories from string.xml to SharedPreferences
     - Let user change category color
 
 
@@ -10,9 +9,8 @@ CATEGORIES AND GRAPH
 COST HISTORY
     - remove description
     - sorting
+    - change item by long-pressing item
 
-RESETALL
- - chart is not redrawn and it's not empty
 
 RESOURCE OPTIMIZATION
     - dont open db if it's already created
