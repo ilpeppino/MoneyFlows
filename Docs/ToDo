@@ -1,23 +1,10 @@
-TO-DO
-
-CATEGORIES AND GRAPH
-
-    - Let user change category color
-
-
-
-COST HISTORY
-    - remove description
-    - sorting
-    - change item by long-pressing item
-
-
-RESOURCE OPTIMIZATION
-    - dont open db if it's already created
-
-- Remove firstusage flag when confident
-
-SETTINGS
-    - Reset data every x days / day in a month (but keep history)
-
-
+Remove landscape view on history 
+After adding, clear cost 
+Remove description label
+Adjust landscape mode 
+Change type of graph with arrows
+User can choose color of the category
+Sorting on history
+Filter on history
+Change item with long pressing
+Reset view every month

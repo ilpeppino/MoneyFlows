@@ -38,7 +38,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     // Only for testing purposes
-    private boolean simulateFirstUse = true;
+    private boolean simulateFirstUse = false;
 
     // Number of categories defined in strings.xml
     private static final int TOTALNRCATEGORIES = 6;
@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Toolbar is defined in activity_main.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.showOverflowMenu(); // NOTE: this method shows the menu on top-right corner
@@ -393,13 +394,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    // The parameter in the menuinflater points to the actions_toolbar.xml menu, where
+    // The parameter in the menuinflater points to the main_toolbarl menu, where
     // it's possible to define custom options.
     // Dependencies: xml file in the menu folder, accessible via R.menu command
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Inflating toolbar...");
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.actions_toolbar, menu);
+        getMenuInflater().inflate(R.menu.main_toolbar, menu);
         return true;
     }
 
@@ -412,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        // The ids accessible via R.id are defined in the actions_toolbar.xml
+        // The ids accessible via R.id are defined in the main_toolbarl
         // menu file.
         if (id == R.id.about) {
             // In order to call another activity that generates a new layout,

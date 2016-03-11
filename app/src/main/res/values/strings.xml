@@ -14,7 +14,7 @@
     </string-array>
 
     <string name="editCost">Cost in euros</string>
-    <string name="editDescription">Description</string>
+    <string name="editDescription">Description (max 30 chars)</string>
     <string name="iconMoneyFlows">Money flows</string>
 
     <string name="settings">Settings</string>
@@ -25,5 +25,6 @@
     <string name="title_activity_reset_all">Reset All</string>
     <string name="title_activity_history_list">History</string>
 
-
+    <string name="filterOnList">Filter</string>
+    <string name="searchInList">Search</string>
 </resources>

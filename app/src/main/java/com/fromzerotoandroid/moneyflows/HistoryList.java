@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.ListView;
 
 import java.text.DateFormat;
@@ -25,7 +26,15 @@ public class HistoryList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_history_list);
+        setContentView(R.layout.activity_history_list);
+        // Toolbar is defined in content_history.xml
+        Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbar);
+        toolbar.showOverflowMenu();
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("History");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
@@ -81,13 +90,7 @@ public class HistoryList extends AppCompatActivity {
 //       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         listview.setAdapter(new CustomAdapterHistoryList(this, listViewItems));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbarlist);
-        toolbar.showOverflowMenu();
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("History");
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
 
@@ -103,6 +106,13 @@ public class HistoryList extends AppCompatActivity {
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "Inflating toolbar...");
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.history_toolbar, menu);
+        return true;
     }
 
     class ListViewItem {
