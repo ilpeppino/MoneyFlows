@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Defines request codes for intents
     public static final int REQUEST_CODE_RESET_ALL = 1;
+    public static final int REQUEST_CODE_SETTINGS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,10 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void accessFirstTime() {
 
-        sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-        editor_valuesCategory = sharedpref_valuesCategory.edit();
-        editor_valuesCategory.clear();
-        editor_valuesCategory.commit();
+        resetValues();
 
         // Clear the cost table (for now)
         BackgroundTask backgroundTask = new BackgroundTask(this);
@@ -280,12 +278,12 @@ public class MainActivity extends AppCompatActivity {
 
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
                 renderer.setColor(currentColor);
-                Log.d("COLORS", "Category: " + currentCategory +
-                        " - Color: " + currentColor +
-                        " - Alpha: " + Color.alpha(currentColor) +
-                        " - Red: " + Color.red(currentColor) +
-                        " - Green: " + Color.green(currentColor) +
-                        " - Blue: " + Color.blue(currentColor));
+//                Log.d("COLORS", "Category: " + currentCategory +
+//                        " - Color: " + currentColor +
+//                        " - Alpha: " + Color.alpha(currentColor) +
+//                        " - Red: " + Color.red(currentColor) +
+//                        " - Green: " + Color.green(currentColor) +
+//                        " - Blue: " + Color.blue(currentColor));
 
                 mRenderer.addSeriesRenderer(renderer);
 
@@ -333,6 +331,13 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, as long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (id == R.id.settings) {
+            Log.d(TAG, "Clicked settings");
+            Intent i = new Intent(getApplicationContext(), Settings.class);
+            startActivityForResult(i, REQUEST_CODE_SETTINGS);
+            return true;
+        }
 
         // The ids accessible via R.id are defined in the main_toolbarl
         // menu file.
@@ -392,6 +397,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
     }
 
+
+    public void resetValues() {
+
+        sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
+        editor_valuesCategory = sharedpref_valuesCategory.edit();
+        editor_valuesCategory.clear();
+        editor_valuesCategory.commit();
+
+    }
 }
 
 

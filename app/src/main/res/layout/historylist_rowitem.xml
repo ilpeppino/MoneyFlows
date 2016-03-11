@@ -35,7 +35,7 @@
 
         android:layout_height="36sp"
         android:textSize="12sp"
-        android:gravity="center"
+        android:gravity="left"
         android:textStyle="italic"
         android:text="Date" />
 

@@ -10,9 +10,9 @@
 
     <color name="Groceries">#ffff0000</color>
     <color name="Family">#ff00ff00</color>
-    <color name="Leisure">#ff0000ff</color>
+    <color name="Leisure">#ff00aaff</color>
     <color name="Transportation">#ff9900</color>
-    <color name="Health">#ff77ffff</color>
+    <color name="Health">#ffaaaaff</color>
     <color name="Pets">#ff999999</color>
 
 
