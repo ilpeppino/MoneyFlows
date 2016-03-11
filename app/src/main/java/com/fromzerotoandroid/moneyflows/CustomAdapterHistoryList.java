@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.fromzerotoandroid.moneyflows.HistoryList.ListViewItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -74,8 +75,11 @@ public class CustomAdapterHistoryList extends BaseAdapter {
         holder.tvCategory = (TextView) rowView.findViewById(R.id.customlistiem_Category);
         holder.tvDate = (TextView) rowView.findViewById(R.id.customlistiem_Date);
 
+        int index = Arrays.asList(Helper.categoryNames).indexOf(item.category);
+
         holder.tvCost.setText(item.cost);
         holder.tvCategory.setText(item.category);
+        holder.tvCategory.setBackgroundResource(Helper.categoryColors[index]);
         holder.tvDate.setText(item.date);
 
         rowView.setOnClickListener(new View.OnClickListener() {
