@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String VALUES_CATEGORY = "ValuesCategory";
     private SharedPreferences sharedpref_valuesCategory;
     private SharedPreferences.Editor editor_valuesCategory;
-    public static final String COLORS_CATEGORY = "ColorsCategory";
-    private SharedPreferences sharedpref_colorCategory;
-    private SharedPreferences.Editor editor_colorCategory;
+    //    public static final String COLORS_CATEGORY = "ColorsCategory";
+//    private SharedPreferences sharedpref_colorCategory;
+//    private SharedPreferences.Editor editor_colorCategory;
     public static final String USERS_SETTINGS = "UserSettings";
     private SharedPreferences sharedpref_usersSettings;
     private SharedPreferences.Editor editor_usersSettings;
@@ -75,18 +75,18 @@ public class MainActivity extends AppCompatActivity {
 //    };
 
     // Array of icons per category
-    public int[] categoryIcons = {R.drawable.groceries,
-            R.drawable.family,
-            R.drawable.entertainment,
-            R.drawable.car,
-            R.drawable.health,
-            R.drawable.pets};
-    public int[] categoryColors = {R.color.Groceries,
-            R.color.Family,
-            R.color.Leisure,
-            R.color.Transportation,
-            R.color.Health,
-            R.color.Pets};
+//    public int[] categoryIcons = {R.drawable.groceries,
+//            R.drawable.family,
+//            R.drawable.entertainment,
+//            R.drawable.car,
+//            R.drawable.health,
+//            R.drawable.pets};
+//    public int[] categoryColors = {R.color.Groceries,
+//            R.color.Family,
+//            R.color.Leisure,
+//            R.color.Transportation,
+//            R.color.Health,
+//            R.color.Pets};
 
     // Information about names, values and colors of categories are defined here.
     // It references to ListItems class in this main class
@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
     // it stores the category names and the index when a cost is added
     private int index;
-    private String[] array_categoryNames = new String[TOTALNRCATEGORIES];
+    //private String[] array_categoryNames = new String[TOTALNRCATEGORIES];
     private float[] array_categoryValues = new float[TOTALNRCATEGORIES];
-    private int[] array_categoryColors = new int[TOTALNRCATEGORIES];
+    //private int[] array_categoryColors = new int[TOTALNRCATEGORIES];
     int accessnumber;
 
     public static final int REQUEST_CODE_RESET_ALL = 1;
@@ -132,11 +132,11 @@ public class MainActivity extends AppCompatActivity {
 
         // gets all the categorynames from strings.xml
         Resources r = getResources(); // NOTE: this method gets all the references to the resources defined in the /res directory
-        array_categoryNames = r.getStringArray(R.array.categories); // it reads from the string-array in the strings.xml
+        //array_categoryNames = r.getStringArray(R.array.categories); // it reads from the string-array in the strings.xml
 
         // Set the icon to Groceries (since that's the first time to be shown in the spinner)
         ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
-        imgIconCategory.setImageResource(categoryIcons[0]);
+        imgIconCategory.setImageResource(Helper.categoryIcons[0]);
 
         // Object reference to the cost and description text views
         et_Cost = (EditText) findViewById(R.id.etCost);
@@ -168,16 +168,16 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Populating arrays...");
 
-        for (int i = 0; i < array_categoryNames.length; i++) {
+        for (int i = 0; i < Helper.categoryNames.length; i++) {
 
-            String currCategory = array_categoryNames[i];
+            String currCategory = Helper.categoryNames[i];
             sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+            //sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
 
             array_categoryValues[i] = sharedpref_valuesCategory.getFloat(currCategory, 0);
-            array_categoryColors[i] = sharedpref_colorCategory.getInt(currCategory, 0);
+            //array_categoryColors[i] = sharedpref_colorCategory.getInt(currCategory, 0);
 
-            Log.d(TAG, "Item " + i + ": " + array_categoryNames[i] + " " + array_categoryValues[i] + " " + array_categoryColors[i] + "\n");
+            Log.d(TAG, "Item " + i + ": " + Helper.categoryNames[i] + " " + array_categoryValues[i] + " " + Helper.categoryColors[i] + "\n");
         }
     }
 
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             // sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
             // Get the index from spinner. so i can reference to color and vsalue
             // for that category
-            index = Arrays.asList(array_categoryNames).indexOf(selectedItem);
+            index = Arrays.asList(Helper.categoryNames).indexOf(selectedItem);
 
             // calculate updated cost
             float actualCost = Float.valueOf(array_categoryValues[index]);
@@ -305,9 +305,9 @@ public class MainActivity extends AppCompatActivity {
                 // ((TextView) parent.getChildAt(0)).setTextColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
                 // parent.getChildAt(0).setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
-                parent.getChildAt(0).setBackgroundResource(categoryColors[position]);
+                parent.getChildAt(0).setBackgroundResource(Helper.categoryColors[position]);
                 ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
-                imgIconCategory.setImageResource(categoryIcons[position]);
+                imgIconCategory.setImageResource(Helper.categoryIcons[position]);
 
             }
 
@@ -347,10 +347,10 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < TOTALNRCATEGORIES; i++) {
 
             // Retrieves the values of each category from the spinner
-            String currentCategory = array_categoryNames[i].toString();
+            String currentCategory = Helper.categoryNames[i].toString();
             // float currentValue = sharedpref_valuesCategory.getFloat(currentCategory, 0);
             float currentValue = array_categoryValues[i];
-            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
+            int currentColor = ContextCompat.getColor(this, Helper.categoryColors[i]);
 
 
             if (currentValue > 0) {
