@@ -26,7 +26,7 @@ public class HistoryList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history_list);
+        setContentView(R.layout.historylist_activity);
         // Toolbar is defined in content_history.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbar);
         toolbar.showOverflowMenu();
@@ -43,7 +43,7 @@ public class HistoryList extends AppCompatActivity {
 
         // Inflate header layout
 //        ListView listView = (ListView) findViewById(R.id.listView);
-//        ViewGroup header_history_list = (ViewGroup) getLayoutInflater().inflate(R.layout.header_list_item, listView, false);
+//        ViewGroup header_history_list = (ViewGroup) getLayoutInflater().inflate(R.layout.historylist_header, listView, false);
 //        listView.addHeaderView(header_history_list);
 
         // Here the database is queried and returns the values from db in result
@@ -75,6 +75,7 @@ public class HistoryList extends AppCompatActivity {
                         lvItem.cost = cost;
                         lvItem.category = category;
                         lvItem.date = date;
+                        lvItem.description = desc;
                         listViewItems.add(lvItem);
 
                     } while (c.moveToNext());
@@ -86,8 +87,7 @@ public class HistoryList extends AppCompatActivity {
         }
 
 
-        ListView listview = (ListView) findViewById(R.id.listView); // content_history_list.xml
-//       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
+        ListView listview = (ListView) findViewById(R.id.listView); // historylist_content.xml//       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         listview.setAdapter(new CustomAdapterHistoryList(this, listViewItems));
 
 
@@ -117,7 +117,7 @@ public class HistoryList extends AppCompatActivity {
 
     class ListViewItem {
 
-        public String cost, date, category;
+        public String cost, date, category, description;
 
     }
 

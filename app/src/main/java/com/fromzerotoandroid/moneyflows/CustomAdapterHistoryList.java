@@ -57,7 +57,7 @@ public class CustomAdapterHistoryList extends BaseAdapter {
     }
 
     public class Holder {
-        TextView tvCost, tvCategory, tvDate;
+        TextView tvCost, tvCategory, tvDate, tvDescription;
     }
 
     @Override
@@ -67,13 +67,14 @@ public class CustomAdapterHistoryList extends BaseAdapter {
         Holder holder = new Holder();
         View rowView;
 
-        rowView = inflater.inflate(R.layout.customlistitem, null);
+        rowView = inflater.inflate(R.layout.historylist_rowitem, null);
 
         ListViewItem item = result.get(position);
 
-        holder.tvCost = (TextView) rowView.findViewById(R.id.customlistiem_Cost);
-        holder.tvCategory = (TextView) rowView.findViewById(R.id.customlistiem_Category);
-        holder.tvDate = (TextView) rowView.findViewById(R.id.customlistiem_Date);
+        holder.tvCost = (TextView) rowView.findViewById(R.id.customlistitem_Cost);
+        holder.tvCategory = (TextView) rowView.findViewById(R.id.customlistitem_Category);
+        holder.tvDate = (TextView) rowView.findViewById(R.id.customlistitem_Date);
+        holder.tvDescription = (TextView) rowView.findViewById(R.id.customlistitem_Description);
 
         int index = Arrays.asList(Helper.categoryNames).indexOf(item.category);
 
@@ -81,6 +82,7 @@ public class CustomAdapterHistoryList extends BaseAdapter {
         holder.tvCategory.setText(item.category);
         holder.tvCategory.setBackgroundResource(Helper.categoryColors[index]);
         holder.tvDate.setText(item.date);
+        holder.tvDescription.setText(item.description);
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override

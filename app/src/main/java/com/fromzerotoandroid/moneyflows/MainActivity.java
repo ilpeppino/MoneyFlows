@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String VALUES_CATEGORY = "ValuesCategory";
     private SharedPreferences sharedpref_valuesCategory;
     private SharedPreferences.Editor editor_valuesCategory;
-    //    public static final String COLORS_CATEGORY = "ColorsCategory";
-//    private SharedPreferences sharedpref_colorCategory;
-//    private SharedPreferences.Editor editor_colorCategory;
     public static final String USERS_SETTINGS = "UserSettings";
     private SharedPreferences sharedpref_usersSettings;
     private SharedPreferences.Editor editor_usersSettings;
@@ -58,39 +55,6 @@ public class MainActivity extends AppCompatActivity {
     // Constants for logging tags
     public static final String TAG = "Class: MainActivity";
 
-    // Array of constants colors for the categories
-//    public static final int[] COLOR_PALETTE = {
-//
-//            Color.argb(255, 255, 0, 0),
-//            Color.argb(255, 0, 255, 0),
-//            Color.argb(255, 0, 0, 255),
-//            Color.argb(255, 128, 0, 128),
-//            Color.argb(255, 0, 128, 128),
-//            Color.argb(255, 128, 128, 128),
-//            Color.argb(255, 200, 128, 128),
-//            Color.argb(255, 255, 128, 255),
-//            Color.argb(255, 128, 0, 255),
-//            Color.argb(255, 0, 0, 0),
-//
-//    };
-
-    // Array of icons per category
-//    public int[] categoryIcons = {R.drawable.groceries,
-//            R.drawable.family,
-//            R.drawable.entertainment,
-//            R.drawable.car,
-//            R.drawable.health,
-//            R.drawable.pets};
-//    public int[] categoryColors = {R.color.Groceries,
-//            R.color.Family,
-//            R.color.Leisure,
-//            R.color.Transportation,
-//            R.color.Health,
-//            R.color.Pets};
-
-    // Information about names, values and colors of categories are defined here.
-    // It references to ListItems class in this main class
-    // List<ListItems> listViewItems = new ArrayList<ListItems>();
 
     // Defines the spinner for selecting the category cost
     Spinner spinner;
@@ -107,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
 
     // it stores the category names and the index when a cost is added
     private int index;
-    //private String[] array_categoryNames = new String[TOTALNRCATEGORIES];
     private float[] array_categoryValues = new float[TOTALNRCATEGORIES];
-    //private int[] array_categoryColors = new int[TOTALNRCATEGORIES];
+
     int accessnumber;
 
+    // Defines request codes for intents
     public static final int REQUEST_CODE_RESET_ALL = 1;
 
     @Override
@@ -121,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Creates the layout and toolbar for the main layout
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.mainactivity_activity);
 
-        // Toolbar is defined in activity_main.xml
+        // Toolbar is defined in mainactivity_activityactivity.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.showOverflowMenu(); // NOTE: this method shows the menu on top-right corner
@@ -172,10 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
             String currCategory = Helper.categoryNames[i];
             sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-            //sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
-
             array_categoryValues[i] = sharedpref_valuesCategory.getFloat(currCategory, 0);
-            //array_categoryColors[i] = sharedpref_colorCategory.getInt(currCategory, 0);
 
             Log.d(TAG, "Item " + i + ": " + Helper.categoryNames[i] + " " + array_categoryValues[i] + " " + Helper.categoryColors[i] + "\n");
         }
@@ -184,39 +145,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void accessFirstTime() {
 
-//        // Clear shared preferences
-//        sharedpref_usersSettings = getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
-//        editor_usersSettings = sharedpref_usersSettings.edit();
-//        editor_usersSettings.clear();
-//        editor_usersSettings.commit();
-
         sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
         editor_valuesCategory = sharedpref_valuesCategory.edit();
         editor_valuesCategory.clear();
         editor_valuesCategory.commit();
-
-//        sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
-//        editor_colorCategory = sharedpref_colorCategory.edit();
-//        editor_colorCategory.clear();
-//        editor_colorCategory.commit();
-//
-//        // For colors, repopulate with standard colors by reading the categories defined in the
-//        // strings.xml and assign the colors from categoryColor in sequence.
-//        // I use ContextCompat.getColor because of a problem with color visualization in 4.4.2
-//        for (int i = 0; i < array_categoryNames.length; i++) {
-//            String currentCategory = array_categoryNames[i].toString();
-//            int currentColor = ContextCompat.getColor(this, categoryColors[i]);
-//            editor_colorCategory.putInt(currentCategory, currentColor);
-//            editor_colorCategory.commit();
-//
-//            Log.d(TAG_COLORS, "Category: " + currentCategory +
-//                    " - Color: " + currentColor +
-//                    " - Alpha: " + Color.alpha(currentColor) +
-//                    " - Red: " + Color.red(currentColor) +
-//                    " - Green: " + Color.green(currentColor) +
-//                    " - Blue: " + Color.blue(currentColor));
-//        }
-
 
         // Clear the cost table (for now)
         BackgroundTask backgroundTask = new BackgroundTask(this);
@@ -239,8 +171,7 @@ public class MainActivity extends AppCompatActivity {
         mDescription = et_Description.getText().toString();
 
 
-        // if the cost is not empty and contains only numbers155
-
+        // if the cost is not empty and contains only numbers
         // ^(?:[1-9]\d*|0)?(?:\.\d+)?$
         // [0-9]+
         if (!(mCost.isEmpty()) && mCost.matches("^(?:[1-9]\\d*|0)?(?:\\.\\d+)?$")) {
@@ -287,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Populating spinner with items...");
 
-        // Customized spinner with spinner_categories xml layout
+        // Customized spinner with mainactivity_spinner xml layout
         spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_categories);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.mainactivity_spinner);
         spinner.setAdapter(adapter);
 
         // IMPORTANT!!!
@@ -297,14 +228,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             // it sets the background color of the textview color beside the spinner
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
+
                 Log.d(TAG, "Spinner - OnItemSelectedListener: " + spinner.getAdapter().getItem(position).toString());
 
-                // TextView tvColor = (TextView) findViewById(R.id.tvCategoryColor);
-                // tvColor.setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
-                // ((TextView) parent.getChildAt(0)).setTextColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
-                // parent.getChildAt(0).setBackgroundColor(sharedpref_colorCategory.getInt(spinner.getAdapter().getItem(position).toString(), 0));
                 parent.getChildAt(0).setBackgroundResource(Helper.categoryColors[position]);
                 ImageView imgIconCategory = (ImageView) findViewById(R.id.imgIconCategory);
                 imgIconCategory.setImageResource(Helper.categoryIcons[position]);
@@ -336,12 +263,6 @@ public class MainActivity extends AppCompatActivity {
 
         // it removes all the existing renderers
         mRenderer.removeAllRenderers();
-
-//        CategoryColor categoryColor = new CategoryColor();
-//        arrColors = categoryColor.getColors(nrChildren);
-
-//        sharedpref_valuesCategory = getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
-//        sharedpref_colorCategory = getSharedPreferences(COLORS_CATEGORY, Context.MODE_PRIVATE);
 
         mSeries.clear();
         for (int i = 0; i < TOTALNRCATEGORIES; i++) {
@@ -469,50 +390,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        // drawPieChart();
-
     }
-
-
-    //    class CategoryColor {
-//
-//        private int[] colors;
-//        private double red, blue, green, alpha;
-//
-//        CategoryColor() {
-//            red = 0;
-//            blue = 0;
-//            green = 0;
-//            alpha = 0;
-//            colors = new int[20];
-//
-//        }
-//
-//        public int[] getColors(int nrCategories) {
-//            Random r = new Random();
-//
-//            for (int i = 0; i < nrCategories; i++) {
-//
-//                red = Math.random() * 255;
-//                blue = Math.random() * 255;
-//                green = Math.random() * 255;
-//                alpha = Math.random() * 255;
-//                colors[i] = Color.argb((int) alpha, (int) red, (int) blue, (int) green);
-//
-//            }
-//
-//            return colors;
-//        }
-//
-//    }
-
-    class ListItems {
-
-        public String cat_name, cat_value;
-        public int cat_color;
-
-    }
-
 
 }
 

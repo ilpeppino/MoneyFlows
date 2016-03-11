@@ -4,40 +4,39 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/customlistiem_Category"
+        android:id="@+id/customlistitem_Category"
         android:layout_width="100sp"
         android:layout_height="36sp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:textSize="12sp"
+        android:textStyle="bold"
         android:text="Category" />
 
     <TextView
-        android:id="@+id/customlistiem_Cost"
+        android:id="@+id/customlistitem_Cost"
         android:layout_width="60sp"
         android:layout_height="36sp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:textSize="12sp"
-        android:background="@color/customlistitem_Cost"
         android:text="Cost" />
 
     <TextView
-        android:id="@+id/customlistiem_Description"
+        android:id="@+id/customlistitem_Description"
         android:layout_width="130sp"
         android:layout_height="36sp"
-
         android:textSize="12sp"
         android:text="Description"
         android:gravity="center_vertical" />
 
 
     <TextView
-        android:id="@+id/customlistiem_Date"
+        android:id="@+id/customlistitem_Date"
         android:layout_width="80sp"
 
         android:layout_height="36sp"
         android:textSize="12sp"
-        android:gravity="center_vertical"
-        android:background="@color/customlistitem_Date"
+        android:gravity="center"
+        android:textStyle="italic"
         android:text="Date" />
 
 

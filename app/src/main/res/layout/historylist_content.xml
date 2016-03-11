@@ -7,7 +7,7 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.fromzerotoandroid.moneyflows.HistoryList"
-    tools:showIn="@layout/activity_history_list">
+    tools:showIn="@layout/historylist_activity">
 
     <!-- Toolbar -->
     <!--   <android.support.v7.widget.Toolbar
@@ -34,6 +34,7 @@
             android:layout_height="36sp"
             android:textStyle="bold"
             android:text="Category"
+            android:gravity="center_vertical"
             android:textSize="16sp"
             android:background="#C0C0C0" />
 
@@ -43,6 +44,7 @@
             android:layout_height="36sp"
             android:textStyle="bold"
             android:background="#C0C0C0"
+            android:gravity="center_vertical"
             android:text="Cost"
             android:textSize="16sp" />
 
@@ -52,6 +54,7 @@
             android:layout_height="36sp"
             android:textStyle="bold"
             android:text="Description"
+            android:gravity="center_vertical"
             android:textSize="16sp"
             android:background="#C0C0C0" />
 
@@ -61,8 +64,8 @@
             android:layout_width="80sp"
             android:textStyle="bold"
             android:layout_height="36sp"
+            android:gravity="center_vertical"
             android:background="#C0C0C0"
-
             android:text="Date"
             android:textSize="16sp" />
 
