@@ -23,6 +23,7 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -32,6 +33,7 @@
             android:name=".ResetAll"
             android:label="@string/title_activity_reset_all"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -41,6 +43,7 @@
             android:name=".HistoryList"
             android:label="@string/title_activity_history_list"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -50,6 +53,7 @@
             android:name=".Settings"
             android:label="Settings"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

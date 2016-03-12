@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     // Only for testing purposes
     private boolean simulateFirstUse = false;
 
-    // Number of categories defined in strings.xml
-    private static final int TOTALNRCATEGORIES = 6;
-
 
     // SharedPreferences, editors and names definition
     public static final String VALUES_CATEGORY = "ValuesCategory";
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     // it stores the category names and the index when a cost is added
     private int index;
-    private float[] array_categoryValues = new float[TOTALNRCATEGORIES];
+    private float[] array_categoryValues = new float[Helper.TOTALNRCATEGORIES];
 
     int accessnumber;
 
@@ -263,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
         mRenderer.removeAllRenderers();
 
         mSeries.clear();
-        for (int i = 0; i < TOTALNRCATEGORIES; i++) {
+        for (int i = 0; i < Helper.TOTALNRCATEGORIES; i++) {
 
             // Retrieves the values of each category from the spinner
             String currentCategory = Helper.categoryNames[i].toString();
