@@ -215,8 +215,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Customized spinner with mainactivity_spinner xml layout
         spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.mainactivity_spinner);
-        spinner.setAdapter(adapter);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.mainactivity_spinner);
+//        spinner.setAdapter(adapter);
+//        ArrayAdapter<String> ArrAdpt = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_spinner_item,Helper.categoryNames);
+        ArrayAdapter<String> ArrAdpt = new ArrayAdapter<String>(getBaseContext(), R.layout.mainactivity_spinner, Helper.categoryNames);
+//        ArrAdpt.setDropDownViewResource(R.layout.mainactivity_spinner);
+        spinner.setAdapter(ArrAdpt);
+
 
         // IMPORTANT!!!
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

@@ -16,5 +16,8 @@
     <color name="Pets">#ff999999</color>
     <color name="Bills">#aaffff</color>
 
+    <color name="selectedListViewItem">#55999900</color>
+    <color name="notSelectedListViewItem">#ffffffff</color>
+
 
 </resources>

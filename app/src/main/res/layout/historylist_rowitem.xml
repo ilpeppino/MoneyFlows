@@ -10,7 +10,8 @@
         android:gravity="center"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:text="Category" />
+        android:text="Category"
+        android:background="@color/notSelectedListViewItem" />
 
     <TextView
         android:id="@+id/customlistitem_Cost"
@@ -18,7 +19,8 @@
         android:layout_height="36sp"
         android:gravity="center"
         android:textSize="12sp"
-        android:text="Cost" />
+        android:text="Cost"
+        android:background="@color/notSelectedListViewItem" />
 
     <TextView
         android:id="@+id/customlistitem_Description"
@@ -26,13 +28,14 @@
         android:layout_height="36sp"
         android:textSize="12sp"
         android:text="Description"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:background="@color/notSelectedListViewItem" />
 
 
     <TextView
         android:id="@+id/customlistitem_Date"
         android:layout_width="80sp"
-
+        android:background="@color/notSelectedListViewItem"
         android:layout_height="36sp"
         android:textSize="12sp"
         android:gravity="left"

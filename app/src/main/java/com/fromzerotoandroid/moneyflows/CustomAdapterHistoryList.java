@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fromzerotoandroid.moneyflows.HistoryList.ListViewItem;
 
@@ -23,15 +22,23 @@ public class CustomAdapterHistoryList extends BaseAdapter {
     List<ListViewItem> result = new ArrayList<>();
     Context context;
     private static LayoutInflater inflater = null;
+//    public int mSelectedItem;
+//    public View mSelectedView;
+//    public boolean isItemSelected;
+
 
     public CustomAdapterHistoryList(HistoryList historyList, List<ListViewItem> result) {
         // TODO Auto-generated constructor stub
 
         context = historyList;
         this.result = result;
+//        isItemSelected = false;
+//        mSelectedItem = -1;
 
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
     }
 
     @Override
@@ -60,14 +67,16 @@ public class CustomAdapterHistoryList extends BaseAdapter {
         TextView tvCost, tvCategory, tvDate, tvDescription;
     }
 
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Log.d(TAG, "Calling getView...Position: " + position);
         // TODO Auto-generated method stub
-        Holder holder = new Holder();
-        View rowView;
+        final Holder holder = new Holder();
+        final View rowView;
 
         rowView = inflater.inflate(R.layout.historylist_rowitem, null);
+
 
         ListViewItem item = result.get(position);
 
@@ -84,13 +93,7 @@ public class CustomAdapterHistoryList extends BaseAdapter {
         holder.tvDate.setText(item.date);
         holder.tvDescription.setText(item.description);
 
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked " + result.get(position).category.toString() + " " + result.get(position).cost.toString() + " " + result.get(position).date.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
         return rowView;
     }
 }
+

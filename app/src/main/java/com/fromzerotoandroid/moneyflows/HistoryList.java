@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.text.DateFormat;
@@ -22,6 +26,7 @@ public class HistoryList extends AppCompatActivity {
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
     public static final String TAG = "Class: HistoryList";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -29,6 +34,7 @@ public class HistoryList extends AppCompatActivity {
         setContentView(R.layout.historylist_activity);
         // Toolbar is defined in content_history.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.history_toolbar);
+
         toolbar.showOverflowMenu();
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
@@ -81,16 +87,18 @@ public class HistoryList extends AppCompatActivity {
                     } while (c.moveToNext());
 
                 }
+                db.close();
             }
         } catch (Exception e) {
             Log.e("History", "Error during database processing");
         }
 
 
-        ListView listview = (ListView) findViewById(R.id.listView); // historylist_content.xml//       listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
+        ListView listview = (ListView) findViewById(R.id.listView);
+        // historylist_content.xml//
+        // listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
+        registerForContextMenu(listview);
         listview.setAdapter(new CustomAdapterHistoryList(this, listViewItems));
-
-
 
 
 
@@ -108,11 +116,34 @@ public class HistoryList extends AppCompatActivity {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Inflating toolbar...");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.history_toolbar, menu);
         return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        Log.d(TAG, "On long click");
+        getMenuInflater().inflate(R.menu.history_rowitem_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        DbOperations dbOperations = new DbOperations(this);
+        SQLiteDatabase db = dbOperations.getWritableDatabase();
+
+        if (item.getItemId() == R.id.deleterowitem) {
+            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "id = " + info.id, null);
+        }
+
+        return super.onContextItemSelected(item);
+
     }
 
     class ListViewItem {

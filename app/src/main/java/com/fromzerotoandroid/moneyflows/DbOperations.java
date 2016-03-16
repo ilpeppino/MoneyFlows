@@ -14,10 +14,11 @@ public class DbOperations extends SQLiteOpenHelper {
 
     private static final String TAG = "Class: DbOperations";
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "cost_history.db";
+    public static final String DB_NAME = "cost_history.db";
 
     private static final String CREATE_TABLE =
             "create table " + FeedReaderContract.CostEntry.TABLE_NAME + "(" +
+                    FeedReaderContract.CostEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_COST + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY + " text, " +

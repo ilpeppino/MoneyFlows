@@ -28,4 +28,5 @@
 
     <string name="filterOnList">Filter</string>
     <string name="searchInList">Search</string>
+    <string name="title_activity_details_trx">DetailsTrx</string>
 </resources>

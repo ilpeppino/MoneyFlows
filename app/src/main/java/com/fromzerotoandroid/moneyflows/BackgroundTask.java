@@ -73,13 +73,16 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             case FeedReaderContract.Methods.ERASE_ALL:
 
                 Log.d(TAG, "Database operation: RESET_ALL");
-
-                // Purge the table from data
+//
+//                // Purge the table from data
                 SQLiteDatabase dbReset = dbOperations.getWritableDatabase();
                 dbOperations.purgeTable(dbReset, FeedReaderContract.CostEntry.TABLE_NAME);
                 dbOperations.close();
 
+
                 toReturn = "Data cleared...";
+
+
                 break;
         }
 
