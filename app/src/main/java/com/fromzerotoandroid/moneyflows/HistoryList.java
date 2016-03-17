@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.text.DateFormat;
@@ -25,6 +26,9 @@ public class HistoryList extends AppCompatActivity {
 
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
     public static final String TAG = "Class: HistoryList";
+
+    public BaseAdapter adapter;
+    List<ListViewItem> listViewItems;
 
 
     @Override
@@ -45,7 +49,7 @@ public class HistoryList extends AppCompatActivity {
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
         // result will contain the result of the query. It must be defined as ListArray
-        List<ListViewItem> listViewItems = new ArrayList<ListViewItem>();
+        listViewItems = new ArrayList<ListViewItem>();
 
         // Inflate header layout
 //        ListView listView = (ListView) findViewById(R.id.listView);
@@ -59,6 +63,7 @@ public class HistoryList extends AppCompatActivity {
             SQLiteDatabase db = dbOperations.getWritableDatabase();
 
             Cursor c = db.rawQuery(QUERY_ALL, null);
+
 
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -88,6 +93,7 @@ public class HistoryList extends AppCompatActivity {
 
                 }
                 db.close();
+                c.close();
             }
         } catch (Exception e) {
             Log.e("History", "Error during database processing");
@@ -98,7 +104,8 @@ public class HistoryList extends AppCompatActivity {
         // historylist_content.xml//
         // listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         registerForContextMenu(listview);
-        listview.setAdapter(new CustomAdapterHistoryList(this, listViewItems));
+        adapter = new CustomAdapterHistoryList(this, listViewItems);
+        listview.setAdapter(adapter);
 
 
 
@@ -129,6 +136,8 @@ public class HistoryList extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         Log.d(TAG, "On long click");
         getMenuInflater().inflate(R.menu.history_rowitem_menu, menu);
+
+
     }
 
     @Override
@@ -137,11 +146,25 @@ public class HistoryList extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         DbOperations dbOperations = new DbOperations(this);
         SQLiteDatabase db = dbOperations.getWritableDatabase();
-
         if (item.getItemId() == R.id.deleterowitem) {
-            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "id = " + info.id, null);
-        }
 
+
+            String[] args = {String.valueOf(info.id)};
+            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_ROWID_=?", args);
+            Log.d(TAG, "Get item with rowid " + info.id);
+
+            //ListViewItem lv = (ListViewItem) adapter.getItem(info.id);
+
+//            int selectedItem = (Integer) adapter.getItem(info.position);
+            // int rowID = Integer.parseInt(selectedItem.id);
+//            listViewItems.remove(selectedItem);
+//            adapter.notifyDataSetChanged();
+
+//            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, " rowid = " + selectedItem, null);
+//            Log.d(TAG, FeedReaderContract.CostEntry.TABLE_NAME + " _rowid_ = " + selectedItem );
+
+        }
+        db.close();
         return super.onContextItemSelected(item);
 
     }

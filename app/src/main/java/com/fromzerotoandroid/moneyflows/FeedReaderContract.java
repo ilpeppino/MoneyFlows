@@ -25,7 +25,6 @@ public final class FeedReaderContract {
     // Table definition for the cost entries
     public static abstract class CostEntry implements BaseColumns {
         public static final String TABLE_NAME = "history";
-        public static final String COLUMN_ID = "id";
         public static final String COLUMN_NAME_COST = "cost";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_CATEGORY = "category";
