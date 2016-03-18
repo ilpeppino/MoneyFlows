@@ -35,7 +35,10 @@ public class DbOperations extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+
         db.execSQL(CREATE_TABLE);
+
+
         Log.d(TAG, "Creating table...");
     }
 
@@ -45,15 +48,18 @@ public class DbOperations extends SQLiteOpenHelper {
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, desc);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, category);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, date);
+
         db.insert(FeedReaderContract.CostEntry.TABLE_NAME, null, contentValues);
+
         Log.d(TAG, "Row inserted in the table...");
     }
 
     public void purgeTable(SQLiteDatabase db, String tableNameToPurge) {
 
-        Log.d(TAG, "Table purged");
+
         db.delete(tableNameToPurge, null, null);
 
+        Log.d(TAG, "Table purged");
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

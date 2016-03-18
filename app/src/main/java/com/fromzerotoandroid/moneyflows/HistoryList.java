@@ -31,6 +31,7 @@ public class HistoryList extends AppCompatActivity {
     List<ListViewItem> listViewItems;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -62,6 +63,7 @@ public class HistoryList extends AppCompatActivity {
             DbOperations dbOperations = new DbOperations(this);
             SQLiteDatabase db = dbOperations.getWritableDatabase();
 
+
             Cursor c = db.rawQuery(QUERY_ALL, null);
 
 
@@ -92,8 +94,9 @@ public class HistoryList extends AppCompatActivity {
                     } while (c.moveToNext());
 
                 }
+
                 db.close();
-                c.close();
+
             }
         } catch (Exception e) {
             Log.e("History", "Error during database processing");
@@ -106,7 +109,6 @@ public class HistoryList extends AppCompatActivity {
         registerForContextMenu(listview);
         adapter = new CustomAdapterHistoryList(this, listViewItems);
         listview.setAdapter(adapter);
-
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -144,27 +146,37 @@ public class HistoryList extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        DbOperations dbOperations = new DbOperations(this);
-        SQLiteDatabase db = dbOperations.getWritableDatabase();
+
         if (item.getItemId() == R.id.deleterowitem) {
+            DbOperations dbOperations = new DbOperations(this);
+            SQLiteDatabase db = dbOperations.getWritableDatabase();
+//            int rowPosition = info.position;
+//            HashMap<String, String> rowData = (HashMap<String, String>) adapter.getItem(rowPosition);
+//            long index = Long.valueOf(rowData.get("_rowid_"));
+//            Log.d(TAG, "ROWID = " + index);
+//            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, " _rowid_ = " + info.position, null);
+//
 
 
-            String[] args = {String.valueOf(info.id)};
-            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_ROWID_=?", args);
-            Log.d(TAG, "Get item with rowid " + info.id);
+            Log.d(TAG, "Get item with info.id=" + info.id + " - info.position=" + info.position);
 
-            //ListViewItem lv = (ListViewItem) adapter.getItem(info.id);
-
-//            int selectedItem = (Integer) adapter.getItem(info.position);
             // int rowID = Integer.parseInt(selectedItem.id);
 //            listViewItems.remove(selectedItem);
 //            adapter.notifyDataSetChanged();
 
-//            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, " rowid = " + selectedItem, null);
-//            Log.d(TAG, FeedReaderContract.CostEntry.TABLE_NAME + " _rowid_ = " + selectedItem );
 
+            Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
+            c1.moveToPosition(info.position);
+            String rowID = c1.getString(c1.getColumnIndex("rowid"));
+            String[] args = {rowID};
+            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
+            listViewItems.remove(info.position);
+            Log.d(TAG, "New size listviewitem: " + String.valueOf(listViewItems.size()));
+            adapter.notifyDataSetChanged();
+//            Log.d(TAG, FeedReaderContract.CostEntry.TABLE_NAME + " _rowid_ = " + selectedItem );
+            db.close();
         }
-        db.close();
+
         return super.onContextItemSelected(item);
 
     }
