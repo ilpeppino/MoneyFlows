@@ -25,7 +25,7 @@ public class DbOperations extends SQLiteOpenHelper {
 
     private static final String DELETE_TABLE = "DELETE FROM ";
 
-    public String categoryAtPosition, costAtPosition, dateAtPosition;
+    public String rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition;
 
     // This constructor MUST be defined
     public DbOperations(Context context) {
@@ -67,12 +67,8 @@ public class DbOperations extends SQLiteOpenHelper {
 
     public void deleteRowFromTable(SQLiteDatabase db, int position) {
 
-        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
-        c1.moveToPosition(position);
-        String rowID = c1.getString(c1.getColumnIndex("rowid"));
-        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
-        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
-        String[] args = {rowID};
+        moveCursorToRowId(db, position);
+        String[] args = {rowidAtPosition};
         db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
 
     }
@@ -89,6 +85,26 @@ public class DbOperations extends SQLiteOpenHelper {
         return dateAtPosition;
     }
 
+    public String getDescriptionAtPosition() {
+        return descriptionAtPosition;
+    }
+
+    public String getRowidAtPosition() {
+        return rowidAtPosition;
+    }
+
+
+    public void moveCursorToRowId(SQLiteDatabase db, int position) {
+
+        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
+        c1.moveToPosition(position);
+        rowidAtPosition = c1.getString(c1.getColumnIndex("rowid"));
+        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
+        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
+        descriptionAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
+        dateAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
+
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

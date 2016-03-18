@@ -142,8 +142,7 @@ public class HistoryList extends AppCompatActivity {
             Date temp_date = fromFormat.parse(dateToProcess);
             returnDate = toFormat.format(temp_date);
             return returnDate;
-        } catch (ParseException e) {              // Insert this block.
-            // TODO Auto-generated catch block
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -199,7 +198,14 @@ public class HistoryList extends AppCompatActivity {
         }
 
         if (item.getItemId() == R.id.updaterowitem) {
-
+            dbOperations.moveCursorToRowId(db, info.position);
+            db.close();
+            Intent myIntent = new Intent(this, DetailsTrx.class);
+            myIntent.putExtra("Cost", dbOperations.costAtPosition);
+            myIntent.putExtra("Category", dbOperations.categoryAtPosition);
+            myIntent.putExtra("Date", dbOperations.dateAtPosition);
+            myIntent.putExtra("Description", dbOperations.descriptionAtPosition);
+            startActivity(myIntent);
         }
 
         return super.onContextItemSelected(item);
