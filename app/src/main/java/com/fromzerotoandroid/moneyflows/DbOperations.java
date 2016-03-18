@@ -2,6 +2,7 @@ package com.fromzerotoandroid.moneyflows;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -23,6 +24,8 @@ public class DbOperations extends SQLiteOpenHelper {
                     FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " text);";
 
     private static final String DELETE_TABLE = "DELETE FROM ";
+
+    public String categoryAtPosition, costAtPosition, dateAtPosition;
 
     // This constructor MUST be defined
     public DbOperations(Context context) {
@@ -61,6 +64,32 @@ public class DbOperations extends SQLiteOpenHelper {
 
         Log.d(TAG, "Table purged");
     }
+
+    public void deleteRowFromTable(SQLiteDatabase db, int position) {
+
+        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
+        c1.moveToPosition(position);
+        String rowID = c1.getString(c1.getColumnIndex("rowid"));
+        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
+        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
+        String[] args = {rowID};
+        db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
+
+    }
+
+    public String getCostAtPosition() {
+        return costAtPosition;
+    }
+
+    public String getCategoryAtPosition() {
+        return categoryAtPosition;
+    }
+
+    public String getDateAtPosition() {
+        return dateAtPosition;
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

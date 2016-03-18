@@ -7,40 +7,40 @@
         android:id="@+id/customlistitem_Category"
         android:layout_width="100sp"
         android:layout_height="36sp"
+        android:background="#ffffffff"
         android:gravity="center"
-        android:textSize="12sp"
-        android:textStyle="bold"
         android:text="Category"
-        android:background="@color/notSelectedListViewItem" />
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/customlistitem_Cost"
         android:layout_width="60sp"
         android:layout_height="36sp"
+        android:background="@color/notSelectedListViewItem"
         android:gravity="center"
-        android:textSize="12sp"
         android:text="Cost"
-        android:background="@color/notSelectedListViewItem" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/customlistitem_Description"
         android:layout_width="130sp"
         android:layout_height="36sp"
-        android:textSize="12sp"
-        android:text="Description"
+        android:background="#ffffffff"
         android:gravity="center_vertical"
-        android:background="@color/notSelectedListViewItem" />
+        android:text="Description"
+        android:textSize="12sp" />
 
 
     <TextView
         android:id="@+id/customlistitem_Date"
         android:layout_width="80sp"
-        android:background="@color/notSelectedListViewItem"
         android:layout_height="36sp"
-        android:textSize="12sp"
+        android:background="#ffffffff"
         android:gravity="left"
-        android:textStyle="italic"
-        android:text="Date" />
+        android:text="Date"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
 
 </LinearLayout>

@@ -1,6 +1,8 @@
 package com.fromzerotoandroid.moneyflows;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,12 +78,14 @@ public class HistoryList extends AppCompatActivity {
                         String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
 
                         //  Formatting date in nice format
-                        DateFormat fromFormat = new SimpleDateFormat("yyyyMMdd");
-                        fromFormat.setLenient(false);
-                        DateFormat toFormat = new SimpleDateFormat("dd-MM-yyyy");
-                        toFormat.setLenient(false);
-                        Date temp_date = fromFormat.parse(c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
-                        String date = toFormat.format(temp_date);
+//                        DateFormat fromFormat = new SimpleDateFormat("yyyyMMdd");
+//                        fromFormat.setLenient(false);
+//                        DateFormat toFormat = new SimpleDateFormat("dd-MM-yyyy");
+//                        toFormat.setLenient(false);
+//                        Date temp_date = fromFormat.parse(c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
+//                        String date = toFormat.format(temp_date);
+
+                        String date = formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
 
                         // String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
@@ -125,6 +130,27 @@ public class HistoryList extends AppCompatActivity {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+
+    public String formatDate(String fromDateFormat, String toDateFormat, String dateToProcess) {
+        String returnDate = "";
+
+        try {
+            DateFormat fromFormat = new SimpleDateFormat(fromDateFormat);
+            fromFormat.setLenient(false);
+            DateFormat toFormat = new SimpleDateFormat(toDateFormat);
+            toFormat.setLenient(false);
+            Date temp_date = fromFormat.parse(dateToProcess);
+            returnDate = toFormat.format(temp_date);
+            return returnDate;
+        } catch (ParseException e) {              // Insert this block.
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return returnDate;
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Inflating toolbar...");
@@ -146,35 +172,34 @@ public class HistoryList extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        DbOperations dbOperations = new DbOperations(this);
+        SQLiteDatabase db = dbOperations.getWritableDatabase();
 
         if (item.getItemId() == R.id.deleterowitem) {
-            DbOperations dbOperations = new DbOperations(this);
-            SQLiteDatabase db = dbOperations.getWritableDatabase();
-//            int rowPosition = info.position;
-//            HashMap<String, String> rowData = (HashMap<String, String>) adapter.getItem(rowPosition);
-//            long index = Long.valueOf(rowData.get("_rowid_"));
-//            Log.d(TAG, "ROWID = " + index);
-//            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, " _rowid_ = " + info.position, null);
-//
+            // Delete row from db
 
+            dbOperations.deleteRowFromTable(db, info.position);
+            db.close();
+
+            // Remove item from listview
+            listViewItems.remove(info.position);
+            adapter.notifyDataSetChanged();
+
+            // Update value in shared preferences
+            SharedPreferences sharedpref_valuesCategory;
+            SharedPreferences.Editor editor_valuesCategory;
+            sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
+            float totalCost = sharedpref_valuesCategory.getFloat(dbOperations.getCategoryAtPosition(), 0);
+            editor_valuesCategory = sharedpref_valuesCategory.edit();
+            editor_valuesCategory.putFloat(dbOperations.getCategoryAtPosition(), totalCost - Float.valueOf(dbOperations.getCostAtPosition()));
+            editor_valuesCategory.commit();
 
             Log.d(TAG, "Get item with info.id=" + info.id + " - info.position=" + info.position);
 
-            // int rowID = Integer.parseInt(selectedItem.id);
-//            listViewItems.remove(selectedItem);
-//            adapter.notifyDataSetChanged();
+        }
 
+        if (item.getItemId() == R.id.updaterowitem) {
 
-            Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
-            c1.moveToPosition(info.position);
-            String rowID = c1.getString(c1.getColumnIndex("rowid"));
-            String[] args = {rowID};
-            db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
-            listViewItems.remove(info.position);
-            Log.d(TAG, "New size listviewitem: " + String.valueOf(listViewItems.size()));
-            adapter.notifyDataSetChanged();
-//            Log.d(TAG, FeedReaderContract.CostEntry.TABLE_NAME + " _rowid_ = " + selectedItem );
-            db.close();
         }
 
         return super.onContextItemSelected(item);
