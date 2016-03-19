@@ -1,5 +1,6 @@
 package com.fromzerotoandroid.moneyflows;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,22 +19,16 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class HistoryList extends AppCompatActivity {
 
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
     public static final String TAG = "Class: HistoryList";
-
+    private static final int REQUEST_CODE_DETAILS_TRX = 10;
     public BaseAdapter adapter;
     List<ListViewItem> listViewItems;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +80,7 @@ public class HistoryList extends AppCompatActivity {
 //                        Date temp_date = fromFormat.parse(c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
 //                        String date = toFormat.format(temp_date);
 
-                        String date = formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
+                        String date = Helper.formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
 
                         // String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
@@ -131,23 +126,7 @@ public class HistoryList extends AppCompatActivity {
     }
 
 
-    public String formatDate(String fromDateFormat, String toDateFormat, String dateToProcess) {
-        String returnDate = "";
 
-        try {
-            DateFormat fromFormat = new SimpleDateFormat(fromDateFormat);
-            fromFormat.setLenient(false);
-            DateFormat toFormat = new SimpleDateFormat(toDateFormat);
-            toFormat.setLenient(false);
-            Date temp_date = fromFormat.parse(dateToProcess);
-            returnDate = toFormat.format(temp_date);
-            return returnDate;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return returnDate;
-    }
 
 
     @Override
@@ -205,11 +184,23 @@ public class HistoryList extends AppCompatActivity {
             myIntent.putExtra("Category", dbOperations.categoryAtPosition);
             myIntent.putExtra("Date", dbOperations.dateAtPosition);
             myIntent.putExtra("Description", dbOperations.descriptionAtPosition);
-            startActivity(myIntent);
+            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
         }
 
         return super.onContextItemSelected(item);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "Receiving intent back from DetailsTrx...");
+
+        if (requestCode == REQUEST_CODE_DETAILS_TRX) {
+            if (resultCode == Activity.RESULT_OK) {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+
+        }
     }
 
     class ListViewItem {
@@ -217,6 +208,4 @@ public class HistoryList extends AppCompatActivity {
         public String cost, date, category, description;
 
     }
-
-
 }
