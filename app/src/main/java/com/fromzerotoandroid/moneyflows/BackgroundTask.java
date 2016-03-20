@@ -28,12 +28,16 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     Context c;
     String mCost, mDescription, mCategory, mDate;
+    int mPosition;
+    DbOperations.TransactionAtRowId trx;
+
 
     BackgroundTask(Context context) {
 
         this.c = context;
 
     }
+
 
     @Override
     protected void onPreExecute() {
@@ -85,6 +89,19 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 toReturn = "Data cleared...";
 
 
+                break;
+
+            case FeedReaderContract.Methods.DELETE_ROW:
+                Log.d(TAG, "Database operation: DELETE_ROW");
+
+                mPosition = Integer.valueOf(params[1]);
+
+                SQLiteDatabase db = dbOperations.getWritableDatabase();
+                dbOperations.deleteRowFromTable(db, mPosition);
+                trx = dbOperations.getTransactionAtRowId();
+                dbOperations.close();
+
+                toReturn = "Row deleted...";
                 break;
         }
 

@@ -37,6 +37,8 @@ public final class FeedReaderContract {
 
         public static final String ADD_COST = "add_cost";
         public static final String ERASE_ALL = "erase_all";
+        public static final String DELETE_ROW = "delete_row";
+        public static final String UPDATE_ROW = "update_row";
 
     }
 

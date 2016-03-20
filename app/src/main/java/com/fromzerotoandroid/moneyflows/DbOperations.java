@@ -25,7 +25,13 @@ public class DbOperations extends SQLiteOpenHelper {
 
     private static final String DELETE_TABLE = "DELETE FROM ";
 
-    public String rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition;
+    String rowidAtPosition,
+            categoryAtPosition,
+            costAtPosition,
+            dateAtPosition,
+            descriptionAtPosition;
+
+
 
     // This constructor MUST be defined
     public DbOperations(Context context) {
@@ -67,35 +73,15 @@ public class DbOperations extends SQLiteOpenHelper {
 
     public void deleteRowFromTable(SQLiteDatabase db, int position) {
 
-        moveCursorToRowId(db, position);
-        String[] args = {rowidAtPosition};
+        TransactionAtRowId trx = moveCursorToRowId(db, position);
+        String[] args = {trx.rowidAtPosition};
         db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
 
     }
 
-    public String getCostAtPosition() {
-        return costAtPosition;
-    }
+    public TransactionAtRowId moveCursorToRowId(SQLiteDatabase db, int position) {
 
-    public String getCategoryAtPosition() {
-        return categoryAtPosition;
-    }
-
-    public String getDateAtPosition() {
-        return dateAtPosition;
-    }
-
-    public String getDescriptionAtPosition() {
-        return descriptionAtPosition;
-    }
-
-    public String getRowidAtPosition() {
-        return rowidAtPosition;
-    }
-
-
-    public void moveCursorToRowId(SQLiteDatabase db, int position) {
-
+        // TransactionAtRowId trx = new TransactionAtRowId();
         Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
         c1.moveToPosition(position);
         rowidAtPosition = c1.getString(c1.getColumnIndex("rowid"));
@@ -104,11 +90,44 @@ public class DbOperations extends SQLiteOpenHelper {
         descriptionAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
         dateAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
+        TransactionAtRowId trx = new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
+
+        return trx;
+
     }
+
+    public TransactionAtRowId getTransactionAtRowId() {
+
+        return new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
+
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 
     }
+
+    public class TransactionAtRowId {
+
+        String rowidAtPosition,
+                categoryAtPosition,
+                costAtPosition,
+                dateAtPosition,
+                descriptionAtPosition;
+
+        TransactionAtRowId(String rowid, String category, String cost, String date, String description) {
+
+            this.rowidAtPosition = rowid;
+            this.categoryAtPosition = category;
+            this.costAtPosition = cost;
+            this.dateAtPosition = date;
+            this.descriptionAtPosition = description;
+
+        }
+
+    }
+
+
 }

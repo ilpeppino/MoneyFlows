@@ -1,15 +1,21 @@
 package com.fromzerotoandroid.moneyflows;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Arrays;
 
+
 public class DetailsTrx extends AppCompatActivity {
+
+    public static final String TAG = "DetailsTrx";
+    String position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,7 @@ public class DetailsTrx extends AppCompatActivity {
 
         // Get intent from History list when Update is selected in context menu
         Intent myIntent = getIntent();
+        position = myIntent.getStringExtra("Position");
         String cost = myIntent.getStringExtra("Cost");
         String description = myIntent.getStringExtra("Description");
         String category = myIntent.getStringExtra("Category");
@@ -57,4 +64,17 @@ public class DetailsTrx extends AppCompatActivity {
 
     }
 
+    public void onUpdateTrxClick() {
+
+        Log.d(TAG, "Clicked udpate transaction");
+
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        // The execute method trigger the doInBackground method in the backgroundtask
+        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, position);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", RESULT_OK);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+
+    }
 }

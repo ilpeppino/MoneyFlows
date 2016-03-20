@@ -150,14 +150,13 @@ public class HistoryList extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        DbOperations dbOperations = new DbOperations(this);
-        SQLiteDatabase db = dbOperations.getWritableDatabase();
 
         if (item.getItemId() == R.id.deleterowitem) {
             // Delete row from db
+            BackgroundTask backgroundTask = new BackgroundTask(this);
+            backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, String.valueOf(info.position));
 
-            dbOperations.deleteRowFromTable(db, info.position);
-            db.close();
+
 
             // Remove item from listview
             listViewItems.remove(info.position);
@@ -167,25 +166,35 @@ public class HistoryList extends AppCompatActivity {
             SharedPreferences sharedpref_valuesCategory;
             SharedPreferences.Editor editor_valuesCategory;
             sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
-            float totalCost = sharedpref_valuesCategory.getFloat(dbOperations.getCategoryAtPosition(), 0);
+
+            // Very bad but it works. It waits until trx has been initialized
+            while (backgroundTask.trx == null) {
+            }
+
+            float totalCost = sharedpref_valuesCategory.getFloat(backgroundTask.trx.categoryAtPosition, 0);
             editor_valuesCategory = sharedpref_valuesCategory.edit();
-            editor_valuesCategory.putFloat(dbOperations.getCategoryAtPosition(), totalCost - Float.valueOf(dbOperations.getCostAtPosition()));
+            editor_valuesCategory.putFloat(backgroundTask.trx.categoryAtPosition, totalCost - Float.valueOf(backgroundTask.trx.costAtPosition));
             editor_valuesCategory.commit();
 
             Log.d(TAG, "Get item with info.id=" + info.id + " - info.position=" + info.position);
 
+            // Same here, very bad but it works. I need to set it to null so that the while loop works for the next deleted item
+            backgroundTask.trx = null;
+
         }
 
-        if (item.getItemId() == R.id.updaterowitem) {
-            dbOperations.moveCursorToRowId(db, info.position);
-            db.close();
-            Intent myIntent = new Intent(this, DetailsTrx.class);
-            myIntent.putExtra("Cost", dbOperations.costAtPosition);
-            myIntent.putExtra("Category", dbOperations.categoryAtPosition);
-            myIntent.putExtra("Date", dbOperations.dateAtPosition);
-            myIntent.putExtra("Description", dbOperations.descriptionAtPosition);
-            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
-        }
+        // TODO refactor update operation
+//        if (item.getItemId() == R.id.updaterowitem) {
+//            dbOperations.moveCursorToRowId(db, info.position);
+//            db.close();
+//            Intent myIntent = new Intent(this, DetailsTrx.class);
+//            myIntent.putExtra("Position", info.position);
+//            myIntent.putExtra("Cost", dbOperations.costAtPosition);
+//            myIntent.putExtra("Category", dbOperations.categoryAtPosition);
+//            myIntent.putExtra("Date", dbOperations.dateAtPosition);
+//            myIntent.putExtra("Description", dbOperations.descriptionAtPosition);
+//            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
+//        }
 
         return super.onContextItemSelected(item);
 
