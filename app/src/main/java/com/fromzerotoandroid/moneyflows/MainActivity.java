@@ -37,44 +37,34 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Only for testing purposes
-    private boolean simulateFirstUse = false;
-
-
     // SharedPreferences, editors and names definition
     public static final String VALUES_CATEGORY = "ValuesCategory";
-    private SharedPreferences sharedpref_valuesCategory;
-    private SharedPreferences.Editor editor_valuesCategory;
     public static final String USERS_SETTINGS = "UserSettings";
-    private SharedPreferences sharedpref_usersSettings;
-    private SharedPreferences.Editor editor_usersSettings;
-
     // Constants for logging tags
     public static final String TAG = "Class: MainActivity";
-
-
+    // Defines request codes for intents
+    public static final int REQUEST_CODE_RESET_ALL = 1;
+    public static final int REQUEST_CODE_SETTINGS = 2;
     // Defines the spinner for selecting the category cost
     Spinner spinner;
-
+    int accessnumber;
+    // Only for testing purposes
+    private boolean simulateFirstUse = false;
+    private SharedPreferences sharedpref_valuesCategory;
+    private SharedPreferences.Editor editor_valuesCategory;
+    private SharedPreferences sharedpref_usersSettings;
+    private SharedPreferences.Editor editor_usersSettings;
     // Variables used by the graphical view of the data
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
     private LinearLayout chart;
-
     // Object references to cost and description in the main layout screen
     private EditText et_Cost, et_Description;
     private String mCost, mDescription;
-
     // it stores the category names and the index when a cost is added
     private int index;
     private float[] array_categoryValues = new float[Helper.TOTALNRCATEGORIES];
-
-    int accessnumber;
-
-    // Defines request codes for intents
-    public static final int REQUEST_CODE_RESET_ALL = 1;
-    public static final int REQUEST_CODE_SETTINGS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -13,14 +13,14 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:title="TEST"
             android:id="@+id/history_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#0000FF"
-            android:titleTextColor="#FFFFFF"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            android:title="TEST"
+            android:titleTextColor="#FFFFFF"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </android.support.design.widget.AppBarLayout>

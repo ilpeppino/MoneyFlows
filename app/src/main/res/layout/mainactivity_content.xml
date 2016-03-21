@@ -32,10 +32,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/etCost"
         android:ems="10"
-        android:maxLength="30"
         android:hint="@string/editDescription"
         android:inputType="text"
         android:lines="3"
+        android:maxLength="30"
         android:paddingTop="16dp"
         />
 
@@ -48,44 +48,45 @@
     <!--/>-->
 
     <ImageView
+        android:id="@+id/imgIconCategory"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/imgIconCategory"
         android:layout_below="@id/etDescription"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp" />
 
 
     <Spinner
+        android:id="@+id/spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_marginTop="16dp"
-        android:layout_below="@id/etDescription"
         android:layout_alignBottom="@id/imgIconCategory"
+        android:layout_below="@id/etDescription"
+        android:layout_marginTop="16dp"
         android:layout_toRightOf="@id/imgIconCategory"
+        android:cacheColorHint="#00000000"
         android:paddingTop="8dp"
-        android:textAlignment="center"
-        android:cacheColorHint="#00000000" />
+        android:textAlignment="center" />
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_add"
         android:layout_below="@id/spinner"
-        android:id="@+id/button"
-        android:paddingTop="16dp"
-        android:onClick="addCost"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:onClick="addCost"
+        android:paddingTop="16dp"
+        android:text="@string/button_add"
         />
 
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/chart"
         android:layout_below="@id/button"
+        android:orientation="horizontal"
         android:paddingTop="20dp"
         />
 

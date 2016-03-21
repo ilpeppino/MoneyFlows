@@ -79,6 +79,17 @@ public class DbOperations extends SQLiteOpenHelper {
 
     }
 
+    public void updateRow(SQLiteDatabase db, int position) {
+        TransactionAtRowId trx = moveCursorToRowId(db, position);
+        String[] args = {trx.rowidAtPosition};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, trx.costAtPosition);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, trx.descriptionAtPosition);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, trx.categoryAtPosition);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, trx.dateAtPosition);
+        db.update(FeedReaderContract.CostEntry.TABLE_NAME, contentValues, "_rowid_=?", args);
+    }
+
     public TransactionAtRowId moveCursorToRowId(SQLiteDatabase db, int position) {
 
         // TransactionAtRowId trx = new TransactionAtRowId();
@@ -116,6 +127,14 @@ public class DbOperations extends SQLiteOpenHelper {
                 costAtPosition,
                 dateAtPosition,
                 descriptionAtPosition;
+
+        TransactionAtRowId() {
+            this.categoryAtPosition = "";
+            this.rowidAtPosition = "";
+            this.costAtPosition = "";
+            this.dateAtPosition = "";
+            this.descriptionAtPosition = "";
+        }
 
         TransactionAtRowId(String rowid, String category, String cost, String date, String description) {
 

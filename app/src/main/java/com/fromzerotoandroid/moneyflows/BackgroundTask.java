@@ -55,6 +55,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         String method = params[0];
         String toReturn = "";
         DbOperations dbOperations = new DbOperations(c);
+        SQLiteDatabase db = dbOperations.getWritableDatabase();
 
         switch (method) {
             // Add the cost in the db
@@ -67,8 +68,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 mCategory = params[3];
                 mDate = params[4];
 
-                SQLiteDatabase dbAdd = dbOperations.getWritableDatabase();
-                dbOperations.addRowToTable(dbAdd, mCost, mDescription, mCategory, mDate);
+
+                dbOperations.addRowToTable(db, mCost, mDescription, mCategory, mDate);
                 dbOperations.close();
 
                 toReturn = "One row inserted...";
@@ -79,10 +80,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 Log.d(TAG, "Database operation: RESET_ALL");
 //
 //                // Purge the table from data
-
-                SQLiteDatabase dbReset = dbOperations.getWritableDatabase();
-
-                dbOperations.purgeTable(dbReset, FeedReaderContract.CostEntry.TABLE_NAME);
+                dbOperations.purgeTable(db, FeedReaderContract.CostEntry.TABLE_NAME);
                 dbOperations.close();
 
 
@@ -96,15 +94,23 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 mPosition = Integer.valueOf(params[1]);
 
-                SQLiteDatabase db = dbOperations.getWritableDatabase();
                 dbOperations.deleteRowFromTable(db, mPosition);
-                trx = dbOperations.getTransactionAtRowId();
                 dbOperations.close();
 
                 toReturn = "Row deleted...";
                 break;
-        }
 
+            case FeedReaderContract.Methods.UPDATE_ROW:
+
+                mPosition = Integer.valueOf(params[1]);
+
+                dbOperations.updateRow(db, mPosition);
+                dbOperations.close();
+
+                toReturn = "Row updated...";
+                break;
+        }
+        db.close();
         return toReturn;
     }
 

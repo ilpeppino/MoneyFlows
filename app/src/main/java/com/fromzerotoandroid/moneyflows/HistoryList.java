@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class HistoryList extends AppCompatActivity {
     private static final int REQUEST_CODE_DETAILS_TRX = 10;
     public BaseAdapter adapter;
     List<ListViewItem> listViewItems;
+    ListViewItem selectedItemListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class HistoryList extends AppCompatActivity {
         registerForContextMenu(listview);
         adapter = new CustomAdapterHistoryList(this, listViewItems);
         listview.setAdapter(adapter);
+        listview.setTextFilterEnabled(true);
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -137,6 +142,39 @@ public class HistoryList extends AppCompatActivity {
         return true;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, as long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.search) {
+
+            EditText editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
+            editText_Search.setVisibility(View.VISIBLE);
+            editText_Search.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+
+        }
+
+        return true;
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -151,50 +189,44 @@ public class HistoryList extends AppCompatActivity {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
+        selectedItemListView = listViewItems.get(info.position);
+        String category = selectedItemListView.category;
+        String cost = selectedItemListView.cost;
+        String date = selectedItemListView.date;
+        String description = selectedItemListView.description;
+
         if (item.getItemId() == R.id.deleterowitem) {
             // Delete row from db
             BackgroundTask backgroundTask = new BackgroundTask(this);
             backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, String.valueOf(info.position));
 
-
-
             // Remove item from listview
             listViewItems.remove(info.position);
             adapter.notifyDataSetChanged();
 
-            // Update value in shared preferences
+//            // Update value in shared preferences
             SharedPreferences sharedpref_valuesCategory;
             SharedPreferences.Editor editor_valuesCategory;
             sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
-
-            // Very bad but it works. It waits until trx has been initialized
-            while (backgroundTask.trx == null) {
-            }
-
-            float totalCost = sharedpref_valuesCategory.getFloat(backgroundTask.trx.categoryAtPosition, 0);
+            float totalCost = sharedpref_valuesCategory.getFloat(category, 0);
             editor_valuesCategory = sharedpref_valuesCategory.edit();
-            editor_valuesCategory.putFloat(backgroundTask.trx.categoryAtPosition, totalCost - Float.valueOf(backgroundTask.trx.costAtPosition));
+            editor_valuesCategory.putFloat(category, totalCost - Float.valueOf(cost));
             editor_valuesCategory.commit();
 
-            Log.d(TAG, "Get item with info.id=" + info.id + " - info.position=" + info.position);
-
-            // Same here, very bad but it works. I need to set it to null so that the while loop works for the next deleted item
-            backgroundTask.trx = null;
 
         }
 
         // TODO refactor update operation
-//        if (item.getItemId() == R.id.updaterowitem) {
-//            dbOperations.moveCursorToRowId(db, info.position);
-//            db.close();
-//            Intent myIntent = new Intent(this, DetailsTrx.class);
-//            myIntent.putExtra("Position", info.position);
-//            myIntent.putExtra("Cost", dbOperations.costAtPosition);
-//            myIntent.putExtra("Category", dbOperations.categoryAtPosition);
-//            myIntent.putExtra("Date", dbOperations.dateAtPosition);
-//            myIntent.putExtra("Description", dbOperations.descriptionAtPosition);
-//            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
-//        }
+        if (item.getItemId() == R.id.updaterowitem) {
+
+            Intent myIntent = new Intent(this, UpdateTransaction.class);
+            myIntent.putExtra("Position", info.position);
+            myIntent.putExtra("Cost", selectedItemListView.cost);
+            myIntent.putExtra("Category", selectedItemListView.category);
+            myIntent.putExtra("Date", selectedItemListView.date);
+            myIntent.putExtra("Description", selectedItemListView.description);
+            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
+        }
 
         return super.onContextItemSelected(item);
 
@@ -202,10 +234,20 @@ public class HistoryList extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "Receiving intent back from DetailsTrx...");
+        Log.d(TAG, "Receiving intent back from UpdateTransaction...");
 
         if (requestCode == REQUEST_CODE_DETAILS_TRX) {
             if (resultCode == Activity.RESULT_OK) {
+
+                // Update value in shared preferences
+                SharedPreferences sharedpref_valuesCategory;
+                SharedPreferences.Editor editor_valuesCategory;
+                sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
+                float totalCost = sharedpref_valuesCategory.getFloat(selectedItemListView.category, 0);
+                editor_valuesCategory = sharedpref_valuesCategory.edit();
+                editor_valuesCategory.putFloat(selectedItemListView.category, Float.valueOf(data.getStringExtra("newCost")));
+                editor_valuesCategory.commit();
+
                 super.onActivityResult(requestCode, resultCode, data);
             }
 
