@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -52,7 +53,7 @@ public class UpdateTransaction extends AppCompatActivity {
         editTextDescription.setSelectAllOnFocus(true);
         textViewCategory.setText(category);
         textViewCategory.setBackgroundResource(Helper.categoryColors[ind]);
-        textViewDate.setText(Helper.formatDate("yyyyMMdd", "dd-MM-yyyy", date));
+        textViewDate.setText(date);
 
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -66,19 +67,24 @@ public class UpdateTransaction extends AppCompatActivity {
 
     }
 
-    public void onUpdateTrxClick() {
+    public void onUpdateTrxClick(View v) {
 
-        Log.d(TAG, "Clicked udpate transaction");
 
-        BackgroundTask backgroundTask = new BackgroundTask(this);
-        // The execute method trigger the doInBackground method in the backgroundtask
-        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, position);
-        Intent returnIntent = new Intent();
+        Log.d(TAG, "Clicked update transaction");
 
+        editTextCost = (EditText) findViewById(R.id.details_trx_cost);
+        editTextDescription = (EditText) findViewById(R.id.details_trx_description);
         String newCost = editTextCost.getText().toString();
         String newDescription = editTextDescription.getText().toString();
 
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        // The execute method trigger the doInBackground method in the backgroundtask
+        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, position, newCost, newDescription);
+        Intent returnIntent = new Intent();
+
+
         returnIntent.putExtra("result", RESULT_OK);
+        returnIntent.putExtra("position", position);
         returnIntent.putExtra("newCost", newCost);
         returnIntent.putExtra("newDescription", newDescription);
         setResult(Activity.RESULT_OK, returnIntent);

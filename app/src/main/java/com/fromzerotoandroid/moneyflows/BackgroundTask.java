@@ -100,11 +100,14 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 toReturn = "Row deleted...";
                 break;
 
+
             case FeedReaderContract.Methods.UPDATE_ROW:
 
                 mPosition = Integer.valueOf(params[1]);
+                mCost = params[2];
+                mDescription = params[3];
 
-                dbOperations.updateRow(db, mPosition);
+                dbOperations.updateRow(db, mPosition, mCost, mDescription);
                 dbOperations.close();
 
                 toReturn = "Row updated...";

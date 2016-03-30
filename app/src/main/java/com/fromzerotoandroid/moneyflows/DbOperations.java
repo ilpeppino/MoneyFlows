@@ -79,12 +79,13 @@ public class DbOperations extends SQLiteOpenHelper {
 
     }
 
-    public void updateRow(SQLiteDatabase db, int position) {
+    public void updateRow(SQLiteDatabase db, int position, String newCost, String newDescription) {
+        // TODO implement update row database operation
         TransactionAtRowId trx = moveCursorToRowId(db, position);
         String[] args = {trx.rowidAtPosition};
         ContentValues contentValues = new ContentValues();
-        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, trx.costAtPosition);
-        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, trx.descriptionAtPosition);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, newCost);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, newDescription);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, trx.categoryAtPosition);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, trx.dateAtPosition);
         db.update(FeedReaderContract.CostEntry.TABLE_NAME, contentValues, "_rowid_=?", args);

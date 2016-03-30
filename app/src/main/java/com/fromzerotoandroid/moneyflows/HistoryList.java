@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -146,8 +147,15 @@ public class HistoryList extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, as long
         // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
+        if (id == android.R.id.home) {
+            Intent upIntent = new Intent(this, MainActivity.class);
+            NavUtils.navigateUpTo(this, upIntent);
+        }
+
+        // TODO implement search functionality
         if (id == R.id.search) {
 
             EditText editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
@@ -220,12 +228,13 @@ public class HistoryList extends AppCompatActivity {
         if (item.getItemId() == R.id.updaterowitem) {
 
             Intent myIntent = new Intent(this, UpdateTransaction.class);
-            myIntent.putExtra("Position", info.position);
+            myIntent.putExtra("Position", String.valueOf(info.position));
             myIntent.putExtra("Cost", selectedItemListView.cost);
             myIntent.putExtra("Category", selectedItemListView.category);
             myIntent.putExtra("Date", selectedItemListView.date);
             myIntent.putExtra("Description", selectedItemListView.description);
             startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
+
         }
 
         return super.onContextItemSelected(item);
@@ -243,10 +252,23 @@ public class HistoryList extends AppCompatActivity {
                 SharedPreferences sharedpref_valuesCategory;
                 SharedPreferences.Editor editor_valuesCategory;
                 sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
-                float totalCost = sharedpref_valuesCategory.getFloat(selectedItemListView.category, 0);
                 editor_valuesCategory = sharedpref_valuesCategory.edit();
                 editor_valuesCategory.putFloat(selectedItemListView.category, Float.valueOf(data.getStringExtra("newCost")));
                 editor_valuesCategory.commit();
+
+                String pos = data.getStringExtra("position");
+                String newCost = data.getStringExtra("newCost");
+                String newDescription = data.getStringExtra("newDescription");
+
+                ListViewItem modifiedListItem = new ListViewItem();
+                modifiedListItem.cost = newCost;
+                modifiedListItem.description = newDescription;
+                modifiedListItem.category = selectedItemListView.category;
+                modifiedListItem.date = selectedItemListView.date;
+                listViewItems.set(Integer.valueOf(pos), modifiedListItem);
+                adapter.notifyDataSetChanged();
+
+
 
                 super.onActivityResult(requestCode, resultCode, data);
             }

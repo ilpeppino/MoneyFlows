@@ -69,6 +69,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.fromzerotoandroid.moneyflows.HistoryList" />
         </activity>
+        <activity
+            android:name=".UpdateTransaction"
+            android:label="Update transaction"
+            android:parentActivityName=".UpdateTransaction"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.fromzerotoandroid.moneyflows.UpdateTransaction" />
+        </activity>
     </application>
 
 </manifest>
