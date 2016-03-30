@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -31,7 +30,7 @@ public class HistoryList extends AppCompatActivity {
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
     public static final String TAG = "Class: HistoryList";
     private static final int REQUEST_CODE_DETAILS_TRX = 10;
-    public BaseAdapter adapter;
+    public CustomAdapterHistoryList adapter;
     List<ListViewItem> listViewItems;
     ListViewItem selectedItemListView;
 
