@@ -75,8 +75,7 @@
         android:id="@+id/searchforiteminhistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search for description..."
-        android:visibility="gone" />
+        android:hint="Search for description..." />
 
     <!-- List -->
     <ListView

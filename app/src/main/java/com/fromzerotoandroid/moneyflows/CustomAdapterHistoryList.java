@@ -108,6 +108,10 @@ public class CustomAdapterHistoryList extends BaseAdapter implements Filterable 
         return mFilter;
     }
 
+    public List<ListViewItem> getFilteredResult() {
+        return filteredResult;
+    }
+
     public class Holder {
         TextView tvTimestamp, tvCost, tvCategory, tvDate, tvDescription;
     }

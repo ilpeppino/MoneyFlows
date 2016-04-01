@@ -32,8 +32,11 @@ public class HistoryList extends AppCompatActivity {
     private static final int REQUEST_CODE_DETAILS_TRX = 10;
     public CustomAdapterHistoryList adapter;
     List<ListViewItem> listViewItems;
+    List<ListViewItem> filteredListViewItems;
     ListViewItem selectedItemListView;
     int position;
+    EditText editText_Search;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class HistoryList extends AppCompatActivity {
         Log.d(TAG, "Receving intent...");
         // result will contain the result of the query. It must be defined as ListArray
         listViewItems = new ArrayList<ListViewItem>();
+
 
         // Inflate header layout
 //        ListView listView = (ListView) findViewById(R.id.listView);
@@ -98,11 +102,13 @@ public class HistoryList extends AppCompatActivity {
                         lvItem.description = desc;
                         listViewItems.add(lvItem);
 
+
                     } while (c.moveToNext());
 
                 }
 
                 db.close();
+
 
             }
         } catch (Exception e) {
@@ -110,13 +116,35 @@ public class HistoryList extends AppCompatActivity {
         }
 
 
-        ListView listview = (ListView) findViewById(R.id.listView);
+        final ListView listview = (ListView) findViewById(R.id.listView);
         // historylist_content.xml//
         // listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         registerForContextMenu(listview);
         adapter = new CustomAdapterHistoryList(this, listViewItems);
         listview.setAdapter(adapter);
         listview.setTextFilterEnabled(true);
+        filteredListViewItems = adapter.getFilteredResult();
+
+        editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
+        editText_Search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "Text [" + s + "]");
+                adapter.getFilter().filter(s.toString());
+                filteredListViewItems = adapter.getFilteredResult();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -157,32 +185,6 @@ public class HistoryList extends AppCompatActivity {
             NavUtils.navigateUpTo(this, upIntent);
         }
 
-        // TODO implement search functionality
-        if (id == R.id.search) {
-
-            EditText editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
-            editText_Search.setVisibility(View.VISIBLE);
-            editText_Search.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    Log.d(TAG, "Text [" + s + "]");
-                    adapter.getFilter().filter(s.toString());
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-
-
-        }
-
         return true;
     }
 
@@ -201,11 +203,12 @@ public class HistoryList extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         position = info.position;
-        selectedItemListView = listViewItems.get(position);
+        filteredListViewItems = adapter.getFilteredResult();
+        selectedItemListView = filteredListViewItems.get(position);
         String idtimestamp = selectedItemListView.idtimestamp;
         String category = selectedItemListView.category;
         String cost = selectedItemListView.cost;
-        String date = selectedItemListView.date;
+//        String date = selectedItemListView.date;
         String description = selectedItemListView.description;
 
         if (item.getItemId() == R.id.deleterowitem) {
@@ -214,8 +217,9 @@ public class HistoryList extends AppCompatActivity {
             backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, idtimestamp);
 
             // Remove item from listview
-            listViewItems.remove(info.position);
+            filteredListViewItems.remove(info.position);
             adapter.notifyDataSetChanged();
+            listViewItems.remove(selectedItemListView);
 
 //            // Update value in shared preferences
             SharedPreferences sharedpref_valuesCategory;
@@ -241,6 +245,7 @@ public class HistoryList extends AppCompatActivity {
             startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
 
         }
+
 
         return super.onContextItemSelected(item);
 
