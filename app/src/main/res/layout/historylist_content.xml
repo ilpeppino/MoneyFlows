@@ -20,6 +20,11 @@
            android:titleTextColor="@android:color/white"
            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /> -->
 
+    <EditText
+        android:id="@+id/searchforiteminhistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search for description..." />
 
     <!-- Header -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -71,11 +76,6 @@
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/searchforiteminhistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search for description..." />
 
     <!-- List -->
     <ListView
