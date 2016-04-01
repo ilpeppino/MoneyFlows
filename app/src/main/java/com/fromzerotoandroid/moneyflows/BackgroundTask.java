@@ -27,9 +27,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     public static final String TAG = "Class: BackgroundTask";
 
     Context c;
-    String mCost, mDescription, mCategory, mDate;
+    String mIdTimestamp, mCost, mDescription, mCategory, mDate;
     int mPosition;
-    DbOperations.TransactionAtRowId trx;
+    //DbOperations.TransactionAtRowId trx;
 
 
     BackgroundTask(Context context) {
@@ -63,13 +63,14 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 Log.d(TAG, "Database operation: ADD_COST");
 
-                mCost = params[1];
-                mDescription = params[2];
-                mCategory = params[3];
-                mDate = params[4];
+                mIdTimestamp = params[1];
+                mCost = params[2];
+                mDescription = params[3];
+                mCategory = params[4];
+                mDate = params[5];
 
 
-                dbOperations.addRowToTable(db, mCost, mDescription, mCategory, mDate);
+                dbOperations.addRowToTable(db, mIdTimestamp, mCost, mDescription, mCategory, mDate);
                 dbOperations.close();
 
                 toReturn = "One row inserted...";
@@ -92,9 +93,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             case FeedReaderContract.Methods.DELETE_ROW:
                 Log.d(TAG, "Database operation: DELETE_ROW");
 
-                mPosition = Integer.valueOf(params[1]);
+                mIdTimestamp = params[1];
 
-                dbOperations.deleteRowFromTable(db, mPosition);
+                dbOperations.deleteRowFromTable(db, mIdTimestamp);
                 dbOperations.close();
 
                 toReturn = "Row deleted...";
@@ -103,11 +104,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
             case FeedReaderContract.Methods.UPDATE_ROW:
 
-                mPosition = Integer.valueOf(params[1]);
+                mIdTimestamp = params[1];
+                // mPosition = Integer.valueOf(params[1]);
                 mCost = params[2];
                 mDescription = params[3];
+                mCategory = params[4];
+                mDate = params[5];
 
-                dbOperations.updateRow(db, mPosition, mCost, mDescription);
+
+                dbOperations.updateRow(db, mIdTimestamp, mCost, mDescription, mCategory, mDate);
                 dbOperations.close();
 
                 toReturn = "Row updated...";

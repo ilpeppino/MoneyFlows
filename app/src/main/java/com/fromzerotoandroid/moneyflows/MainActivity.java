@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         // Object reference to the cost and description text views
         et_Cost = (EditText) findViewById(R.id.etCost);
         et_Description = (EditText) findViewById(R.id.etDescription);
+        et_Cost.setSelectAllOnFocus(true);
+        et_Description.setSelectAllOnFocus(true);
 
         // Read the shared preferences and checks if this the first time the app is accessed
         // For first time usage simulation only, clean up the shared preferences and purge table
@@ -187,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
             // Insert this value in the table for the history and execute method ADD_COST via doInBackground method in the backgroundtask
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
-            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, mCost, mDescription, selectedItem, date);
+            String currentTimeInMs = String.valueOf(System.currentTimeMillis());
+            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, currentTimeInMs, mCost, mDescription, selectedItem, date);
 
         } else {
 

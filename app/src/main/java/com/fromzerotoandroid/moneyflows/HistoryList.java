@@ -33,6 +33,7 @@ public class HistoryList extends AppCompatActivity {
     public CustomAdapterHistoryList adapter;
     List<ListViewItem> listViewItems;
     ListViewItem selectedItemListView;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class HistoryList extends AppCompatActivity {
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
+                        String idtimestamp = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP));
                         String cost = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
                         String category = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
                         String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
@@ -89,6 +91,7 @@ public class HistoryList extends AppCompatActivity {
                         // String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
                         ListViewItem lvItem = new ListViewItem();
+                        lvItem.idtimestamp = idtimestamp;
                         lvItem.cost = cost;
                         lvItem.category = category;
                         lvItem.date = date;
@@ -167,7 +170,8 @@ public class HistoryList extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                    Log.d(TAG, "Text [" + s + "]");
+                    adapter.getFilter().filter(s.toString());
                 }
 
                 @Override
@@ -196,7 +200,9 @@ public class HistoryList extends AppCompatActivity {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        selectedItemListView = listViewItems.get(info.position);
+        position = info.position;
+        selectedItemListView = listViewItems.get(position);
+        String idtimestamp = selectedItemListView.idtimestamp;
         String category = selectedItemListView.category;
         String cost = selectedItemListView.cost;
         String date = selectedItemListView.date;
@@ -205,7 +211,7 @@ public class HistoryList extends AppCompatActivity {
         if (item.getItemId() == R.id.deleterowitem) {
             // Delete row from db
             BackgroundTask backgroundTask = new BackgroundTask(this);
-            backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, String.valueOf(info.position));
+            backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, idtimestamp);
 
             // Remove item from listview
             listViewItems.remove(info.position);
@@ -227,7 +233,7 @@ public class HistoryList extends AppCompatActivity {
         if (item.getItemId() == R.id.updaterowitem) {
 
             Intent myIntent = new Intent(this, UpdateTransaction.class);
-            myIntent.putExtra("Position", String.valueOf(info.position));
+            myIntent.putExtra("IdTimestamp", selectedItemListView.idtimestamp);
             myIntent.putExtra("Cost", selectedItemListView.cost);
             myIntent.putExtra("Category", selectedItemListView.category);
             myIntent.putExtra("Date", selectedItemListView.date);
@@ -247,24 +253,28 @@ public class HistoryList extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_DETAILS_TRX) {
             if (resultCode == Activity.RESULT_OK) {
 
+                String newCost = data.getStringExtra("newCost");
+                String newDescription = data.getStringExtra("newDescription");
+
+                // TODO update the values in sharedpref correctly
                 // Update value in shared preferences
                 SharedPreferences sharedpref_valuesCategory;
                 SharedPreferences.Editor editor_valuesCategory;
                 sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
+                Float oldCost = sharedpref_valuesCategory.getFloat(selectedItemListView.category, 0);
                 editor_valuesCategory = sharedpref_valuesCategory.edit();
-                editor_valuesCategory.putFloat(selectedItemListView.category, Float.valueOf(data.getStringExtra("newCost")));
+                editor_valuesCategory.putFloat(selectedItemListView.category, oldCost - Float.valueOf(selectedItemListView.cost) + Float.valueOf(newCost));
                 editor_valuesCategory.commit();
 
-                String pos = data.getStringExtra("position");
-                String newCost = data.getStringExtra("newCost");
-                String newDescription = data.getStringExtra("newDescription");
+
 
                 ListViewItem modifiedListItem = new ListViewItem();
+                modifiedListItem.idtimestamp = selectedItemListView.idtimestamp;
                 modifiedListItem.cost = newCost;
                 modifiedListItem.description = newDescription;
                 modifiedListItem.category = selectedItemListView.category;
                 modifiedListItem.date = selectedItemListView.date;
-                listViewItems.set(Integer.valueOf(pos), modifiedListItem);
+                listViewItems.set(position, modifiedListItem);
                 adapter.notifyDataSetChanged();
 
 
@@ -277,7 +287,7 @@ public class HistoryList extends AppCompatActivity {
 
     class ListViewItem {
 
-        public String cost, date, category, description;
+        public String idtimestamp, cost, date, category, description;
 
     }
 }

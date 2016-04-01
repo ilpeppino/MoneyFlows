@@ -2,7 +2,6 @@ package com.fromzerotoandroid.moneyflows;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -18,18 +17,19 @@ public class DbOperations extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static final String CREATE_TABLE =
             "create table " + FeedReaderContract.CostEntry.TABLE_NAME + "(" +
+                    FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_COST + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " text);";
 
-    private static final String DELETE_TABLE = "DELETE FROM ";
+//    private static final String DELETE_TABLE = "DELETE FROM ";
 
-    String rowidAtPosition,
-            categoryAtPosition,
-            costAtPosition,
-            dateAtPosition,
-            descriptionAtPosition;
+//    String rowidAtPosition,
+//            categoryAtPosition,
+//            costAtPosition,
+//            dateAtPosition,
+//            descriptionAtPosition;
 
 
 
@@ -51,8 +51,9 @@ public class DbOperations extends SQLiteOpenHelper {
         Log.d(TAG, "Creating table...");
     }
 
-    public void addRowToTable(SQLiteDatabase db, String cost, String desc, String category, String date) {
+    public void addRowToTable(SQLiteDatabase db, String idTimestamp, String cost, String desc, String category, String date) {
         ContentValues contentValues = new ContentValues();
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP, idTimestamp);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, cost);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, desc);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, category);
@@ -71,48 +72,50 @@ public class DbOperations extends SQLiteOpenHelper {
         Log.d(TAG, "Table purged");
     }
 
-    public void deleteRowFromTable(SQLiteDatabase db, int position) {
+    public void deleteRowFromTable(SQLiteDatabase db, String idTimestamp) {
 
-        TransactionAtRowId trx = moveCursorToRowId(db, position);
-        String[] args = {trx.rowidAtPosition};
-        db.delete(FeedReaderContract.CostEntry.TABLE_NAME, "_rowid_=?", args);
+        // TransactionAtRowId trx = moveCursorToRowId(db, position);
+        String[] args = {idTimestamp};
+        db.delete(FeedReaderContract.CostEntry.TABLE_NAME, FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP + "=?", args);
 
     }
 
-    public void updateRow(SQLiteDatabase db, int position, String newCost, String newDescription) {
+    public void updateRow(SQLiteDatabase db, String idTimestamp, String newCost, String newDescription, String category, String date) {
         // TODO implement update row database operation
-        TransactionAtRowId trx = moveCursorToRowId(db, position);
-        String[] args = {trx.rowidAtPosition};
+        // TransactionAtRowId trx = moveCursorToRowId(db, position);
+        String[] args = {idTimestamp};
         ContentValues contentValues = new ContentValues();
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP, idTimestamp);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_COST, newCost);
         contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, newDescription);
-        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, trx.categoryAtPosition);
-        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, trx.dateAtPosition);
-        db.update(FeedReaderContract.CostEntry.TABLE_NAME, contentValues, "_rowid_=?", args);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, category);
+        String formattedDate = Helper.formatDate("dd-MM-yyyy", "yyyyMMdd", date);
+        contentValues.put(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, formattedDate);
+        db.update(FeedReaderContract.CostEntry.TABLE_NAME, contentValues, FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP + "=?", args);
     }
 
-    public TransactionAtRowId moveCursorToRowId(SQLiteDatabase db, int position) {
+//    public TransactionAtRowId moveCursorToRowId(SQLiteDatabase db, int position) {
+//
+//        // TransactionAtRowId trx = new TransactionAtRowId();
+//        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
+//        c1.moveToPosition(position);
+//        rowidAtPosition = c1.getString(c1.getColumnIndex("rowid"));
+//        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
+//        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
+//        descriptionAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
+//        dateAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
+//
+//        TransactionAtRowId trx = new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
+//
+//        return trx;
+//
+//    }
 
-        // TransactionAtRowId trx = new TransactionAtRowId();
-        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
-        c1.moveToPosition(position);
-        rowidAtPosition = c1.getString(c1.getColumnIndex("rowid"));
-        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
-        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
-        descriptionAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
-        dateAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
-
-        TransactionAtRowId trx = new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
-
-        return trx;
-
-    }
-
-    public TransactionAtRowId getTransactionAtRowId() {
-
-        return new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
-
-    }
+//    public TransactionAtRowId getTransactionAtRowId() {
+//
+//        return new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
+//
+//    }
 
 
     @Override
@@ -121,33 +124,33 @@ public class DbOperations extends SQLiteOpenHelper {
 
     }
 
-    public class TransactionAtRowId {
-
-        String rowidAtPosition,
-                categoryAtPosition,
-                costAtPosition,
-                dateAtPosition,
-                descriptionAtPosition;
-
-        TransactionAtRowId() {
-            this.categoryAtPosition = "";
-            this.rowidAtPosition = "";
-            this.costAtPosition = "";
-            this.dateAtPosition = "";
-            this.descriptionAtPosition = "";
-        }
-
-        TransactionAtRowId(String rowid, String category, String cost, String date, String description) {
-
-            this.rowidAtPosition = rowid;
-            this.categoryAtPosition = category;
-            this.costAtPosition = cost;
-            this.dateAtPosition = date;
-            this.descriptionAtPosition = description;
-
-        }
-
-    }
+//    public class TransactionAtRowId {
+//
+//        String rowidAtPosition,
+//                categoryAtPosition,
+//                costAtPosition,
+//                dateAtPosition,
+//                descriptionAtPosition;
+//
+//        TransactionAtRowId() {
+//            this.categoryAtPosition = "";
+//            this.rowidAtPosition = "";
+//            this.costAtPosition = "";
+//            this.dateAtPosition = "";
+//            this.descriptionAtPosition = "";
+//        }
+//
+//        TransactionAtRowId(String rowid, String category, String cost, String date, String description) {
+//
+//            this.rowidAtPosition = rowid;
+//            this.categoryAtPosition = category;
+//            this.costAtPosition = cost;
+//            this.dateAtPosition = date;
+//            this.descriptionAtPosition = description;
+//
+//        }
+//
+//    }
 
 
 }

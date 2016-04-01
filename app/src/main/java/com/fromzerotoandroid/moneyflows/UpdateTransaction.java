@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class UpdateTransaction extends AppCompatActivity {
 
     public static final String TAG = "UpdateTransaction";
-    String position;
+    String position, IdTimestamp, cost, description, category, date;
 
     EditText editTextCost, editTextDescription;
 
@@ -30,11 +30,11 @@ public class UpdateTransaction extends AppCompatActivity {
 
         // Get intent from History list when Update is selected in context menu
         Intent myIntent = getIntent();
-        position = myIntent.getStringExtra("Position");
-        String cost = myIntent.getStringExtra("Cost");
-        String description = myIntent.getStringExtra("Description");
-        String category = myIntent.getStringExtra("Category");
-        String date = myIntent.getStringExtra("Date");
+        IdTimestamp = myIntent.getStringExtra("IdTimestamp");
+        cost = myIntent.getStringExtra("Cost");
+        description = myIntent.getStringExtra("Description");
+        category = myIntent.getStringExtra("Category");
+        date = myIntent.getStringExtra("Date");
 
         // Hook the edit texts in UpdateTransaction layout
         editTextCost = (EditText) findViewById(R.id.details_trx_cost);
@@ -79,12 +79,12 @@ public class UpdateTransaction extends AppCompatActivity {
 
         BackgroundTask backgroundTask = new BackgroundTask(this);
         // The execute method trigger the doInBackground method in the backgroundtask
-        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, position, newCost, newDescription);
+        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, IdTimestamp, newCost, newDescription, category, date);
         Intent returnIntent = new Intent();
 
 
         returnIntent.putExtra("result", RESULT_OK);
-        returnIntent.putExtra("position", position);
+
         returnIntent.putExtra("newCost", newCost);
         returnIntent.putExtra("newDescription", newDescription);
         setResult(Activity.RESULT_OK, returnIntent);
