@@ -126,6 +126,9 @@ public class HistoryList extends AppCompatActivity {
         filteredListViewItems = adapter.getFilteredResult();
 
         editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
+        editText_Search.setFocusable(false);
+//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(editText_Search.getWindowToken(), 0);
         editText_Search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

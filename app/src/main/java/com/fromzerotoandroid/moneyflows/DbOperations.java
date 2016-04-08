@@ -2,6 +2,7 @@ package com.fromzerotoandroid.moneyflows;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -116,6 +117,29 @@ public class DbOperations extends SQLiteOpenHelper {
 //        return new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
 //
 //    }
+
+    public String[] getAllDescriptions() {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(true, FeedReaderContract.CostEntry.TABLE_NAME, new String[]{FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION}, null, null, null, null, null, null);
+
+        if (cursor.getCount() > 0) {
+            String[] str = new String[cursor.getCount()];
+            int i = 0;
+            while (cursor.moveToNext()) {
+                str[i] = cursor.getString(cursor.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
+                i++;
+            }
+            cursor.close();
+            return str;
+        } else {
+            cursor.close();
+            return new String[]{};
+        }
+
+
+    }
 
 
     @Override

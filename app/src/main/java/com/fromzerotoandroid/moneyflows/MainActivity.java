@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // Defines the spinner for selecting the category cost
     Spinner spinner;
     int accessnumber;
+    ArrayAdapter<String> desc_adapter;
     // Only for testing purposes
     private boolean simulateFirstUse = false;
     private SharedPreferences sharedpref_valuesCategory;
@@ -60,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private GraphicalView mChartView;
     private LinearLayout chart;
     // Object references to cost and description in the main layout screen
-    private EditText et_Cost, et_Description;
+    private EditText et_Cost;
+    private AutoCompleteTextView et_Description;
     private String mCost, mDescription;
     // it stores the category names and the index when a cost is added
     private int index;
@@ -92,9 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Object reference to the cost and description text views
         et_Cost = (EditText) findViewById(R.id.etCost);
-        et_Description = (EditText) findViewById(R.id.etDescription);
+        et_Description = (AutoCompleteTextView) findViewById(R.id.etDescription);
         et_Cost.setSelectAllOnFocus(true);
         et_Description.setSelectAllOnFocus(true);
+        //et_Description.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+
+        DbOperations dbOperations = new DbOperations(this);
+        String[] descriptions = dbOperations.getAllDescriptions();
+        desc_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, descriptions);
+        et_Description.setAdapter(desc_adapter);
 
         // Read the shared preferences and checks if this the first time the app is accessed
         // For first time usage simulation only, clean up the shared preferences and purge table
@@ -192,14 +201,29 @@ public class MainActivity extends AppCompatActivity {
             String currentTimeInMs = String.valueOf(System.currentTimeMillis());
             backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, currentTimeInMs, mCost, mDescription, selectedItem, date);
 
+            updateDescriptionsForAutocomplete();
+
         } else {
 
             Toast.makeText(this, "Please insert cost", Toast.LENGTH_SHORT).show();
 
         }
 
+        et_Cost.requestFocus();
+        et_Description.setText("");
+
 
     }
+
+    public void updateDescriptionsForAutocomplete() {
+
+        DbOperations dbOperations = new DbOperations(this);
+        String[] descriptions = dbOperations.getAllDescriptions();
+        desc_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, descriptions);
+        et_Description.setAdapter(desc_adapter);
+
+    }
+
 
 
     private void populateSpinnerCategories() {
@@ -379,6 +403,7 @@ public class MainActivity extends AppCompatActivity {
                 populateSpinnerCategories();
 
                 paintGraphics();
+                updateDescriptionsForAutocomplete();
 
             } else {
 
