@@ -84,12 +84,12 @@ public class CustomAdapterHistoryList extends BaseAdapter implements Filterable 
         holder.tvDate = (TextView) rowView.findViewById(R.id.customlistitem_Date);
         holder.tvDescription = (TextView) rowView.findViewById(R.id.customlistitem_Description);
 
-        int index = Arrays.asList(Helper.categoryNames).indexOf(item.category);
+        int index = Arrays.asList(Helper.CATEGORY_NAMES).indexOf(item.category);
 
         holder.tvTimestamp.setText(item.idtimestamp);
         holder.tvCost.setText(item.cost);
         holder.tvCategory.setText(item.category);
-        holder.tvCategory.setBackgroundResource(Helper.categoryColors[index]);
+        holder.tvCategory.setBackgroundResource(Helper.CATEGORY_COLORS[index]);
         holder.tvDate.setText(item.date);
         holder.tvDescription.setText(item.description);
 

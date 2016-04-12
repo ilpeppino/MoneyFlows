@@ -14,7 +14,10 @@ public class Helper {
 
     public static final int TOTALNRCATEGORIES = 7;
 
-    public static final int[] categoryColors = {R.color.Groceries,
+    public static final String VALUES_CATEGORY = "ValuesCategory";
+    public static final String USERS_SETTINGS = "UserSettings";
+
+    public static final int[] CATEGORY_COLORS = {R.color.Groceries,
             R.color.Family,
             R.color.Leisure,
             R.color.Transportation,
@@ -22,8 +25,7 @@ public class Helper {
             R.color.Pets,
             R.color.Bills};
 
-
-    public static final int[] categoryIcons = {R.drawable.groceries,
+    public static final int[] CATEGORY_ICONS = {R.drawable.groceries,
             R.drawable.family,
             R.drawable.entertainment,
             R.drawable.car,
@@ -31,7 +33,9 @@ public class Helper {
             R.drawable.pets,
             R.drawable.bills};
 
-    public static final String[] categoryNames = {"Groceries",
+    public static final String PIE_CHART = "PieChart";
+
+    public static final String[] CATEGORY_NAMES = {"Groceries",
             "Family",
             "Leisure",
             "Transportation",

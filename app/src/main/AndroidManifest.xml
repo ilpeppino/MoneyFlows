@@ -61,15 +61,6 @@
                 android:value="com.fromzerotoandroid.moneyflows.MainActivity" />
         </activity>
         <activity
-            android:name=".DetailsTrx"
-            android:label="@string/title_activity_details_trx"
-            android:parentActivityName=".HistoryList"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.fromzerotoandroid.moneyflows.HistoryList" />
-        </activity>
-        <activity
             android:name=".UpdateTransaction"
             android:label="Update transaction"
             android:parentActivityName=".UpdateTransaction"

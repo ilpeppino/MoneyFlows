@@ -43,7 +43,7 @@ public class UpdateTransaction extends AppCompatActivity {
         TextView textViewDate = (TextView) findViewById(R.id.details_trx_date);
 
         // Get index for category
-        int ind = Arrays.asList(Helper.categoryNames).indexOf(category);
+        int ind = Arrays.asList(Helper.CATEGORY_NAMES).indexOf(category);
 
 
         // Set text from clicked item to be updated
@@ -52,7 +52,7 @@ public class UpdateTransaction extends AppCompatActivity {
         editTextDescription.setText(description, TextView.BufferType.EDITABLE);
         editTextDescription.setSelectAllOnFocus(true);
         textViewCategory.setText(category);
-        textViewCategory.setBackgroundResource(Helper.categoryColors[ind]);
+        textViewCategory.setBackgroundResource(Helper.CATEGORY_COLORS[ind]);
         textViewDate.setText(date);
 
 

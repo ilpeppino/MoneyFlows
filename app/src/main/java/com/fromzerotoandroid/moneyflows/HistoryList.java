@@ -1,9 +1,7 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -36,6 +34,7 @@ public class HistoryList extends AppCompatActivity {
     ListViewItem selectedItemListView;
     int position;
     EditText editText_Search;
+    StorageObject soValuesCategory;
 
 
     @Override
@@ -53,19 +52,13 @@ public class HistoryList extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        soValuesCategory = new StorageObject(getApplicationContext(), StorageObject.FLOAT_TYPE, Helper.VALUES_CATEGORY);
+
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
         // result will contain the result of the query. It must be defined as ListArray
         listViewItems = new ArrayList<ListViewItem>();
 
-
-        // Inflate header layout
-//        ListView listView = (ListView) findViewById(R.id.listView);
-//        ViewGroup header_history_list = (ViewGroup) getLayoutInflater().inflate(R.layout.historylist_header, listView, false);
-//        listView.addHeaderView(header_history_list);
-
-        // Here the database is queried and returns the values from db in result
-        // Best practice is to use try-catch
         try {
             DbOperations dbOperations = new DbOperations(this);
             SQLiteDatabase db = dbOperations.getWritableDatabase();
@@ -81,18 +74,7 @@ public class HistoryList extends AppCompatActivity {
                         String cost = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
                         String category = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
                         String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
-
-                        //  Formatting date in nice format
-//                        DateFormat fromFormat = new SimpleDateFormat("yyyyMMdd");
-//                        fromFormat.setLenient(false);
-//                        DateFormat toFormat = new SimpleDateFormat("dd-MM-yyyy");
-//                        toFormat.setLenient(false);
-//                        Date temp_date = fromFormat.parse(c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
-//                        String date = toFormat.format(temp_date);
-
                         String date = Helper.formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
-
-                        // String date = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
 
                         ListViewItem lvItem = new ListViewItem();
                         lvItem.idtimestamp = idtimestamp;
@@ -101,24 +83,15 @@ public class HistoryList extends AppCompatActivity {
                         lvItem.date = date;
                         lvItem.description = desc;
                         listViewItems.add(lvItem);
-
-
                     } while (c.moveToNext());
-
                 }
-
                 db.close();
-
-
             }
         } catch (Exception e) {
             Log.e("History", "Error during database processing");
         }
 
-
         final ListView listview = (ListView) findViewById(R.id.listView);
-        // historylist_content.xml//
-        // listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, result));
         registerForContextMenu(listview);
         adapter = new CustomAdapterHistoryList(this, listViewItems);
         listview.setAdapter(adapter);
@@ -127,8 +100,6 @@ public class HistoryList extends AppCompatActivity {
 
         editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
         editText_Search.setFocusable(false);
-//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(editText_Search.getWindowToken(), 0);
         editText_Search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -149,24 +120,7 @@ public class HistoryList extends AppCompatActivity {
             }
         });
 
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,14 +179,7 @@ public class HistoryList extends AppCompatActivity {
             listViewItems.remove(selectedItemListView);
 
 //            // Update value in shared preferences
-            SharedPreferences sharedpref_valuesCategory;
-            SharedPreferences.Editor editor_valuesCategory;
-            sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
-            float totalCost = sharedpref_valuesCategory.getFloat(category, 0);
-            editor_valuesCategory = sharedpref_valuesCategory.edit();
-            editor_valuesCategory.putFloat(category, totalCost - Float.valueOf(cost));
-            editor_valuesCategory.commit();
-
+            soValuesCategory.removeValue(category, cost);
 
         }
 
@@ -266,14 +213,7 @@ public class HistoryList extends AppCompatActivity {
 
                 // TODO update the values in sharedpref correctly
                 // Update value in shared preferences
-                SharedPreferences sharedpref_valuesCategory;
-                SharedPreferences.Editor editor_valuesCategory;
-                sharedpref_valuesCategory = getSharedPreferences(MainActivity.VALUES_CATEGORY, Context.MODE_PRIVATE);
-                Float oldCost = sharedpref_valuesCategory.getFloat(selectedItemListView.category, 0);
-                editor_valuesCategory = sharedpref_valuesCategory.edit();
-                editor_valuesCategory.putFloat(selectedItemListView.category, oldCost - Float.valueOf(selectedItemListView.cost) + Float.valueOf(newCost));
-                editor_valuesCategory.commit();
-
+                soValuesCategory.updateValue(selectedItemListView.category, selectedItemListView.cost, newCost);
 
 
                 ListViewItem modifiedListItem = new ListViewItem();
