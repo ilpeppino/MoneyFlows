@@ -33,13 +33,34 @@ public final class FeedReaderContract {
 
     }
 
+    // Table definition for the cost entries archive
+    public static abstract class CostEntryArchive implements BaseColumns {
+        public static final String TABLE_NAME = "history";
+        public static final String COLUMN_NAME_TIMESTAMP = "id_ts";
+        public static final String COLUMN_NAME_COST = "cost";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_CATEGORY = "category";
+        public static final String COLUMN_NAME_DATE = "date";
+
+    }
+
+    public static abstract class UserSettings implements BaseColumns {
+        public static final String TABLE_NAME = "usersettings";
+        public static final String COLUMN_NAME_RESETDAY = "resetday";
+        public static final String COLUMN_NAME_LASTACCESS = "lastaccess";
+        public static final String COLUMN_NAME_CURRENTACCESS = "curraccess";
+        public static final String COLUMN_NAME_LASTBACKUP = "lastbackup";
+    }
 
     public static abstract class Methods {
 
         public static final String ADD_COST = "add_cost";
-        public static final String ERASE_ALL = "erase_all";
+        public static final String PREPAREFORFIRSTUSAGE = "prepareforfirstusage";
         public static final String DELETE_ROW = "delete_row";
         public static final String UPDATE_ROW = "update_row";
+        public static final String GETLASTBACKUP = "getlastbackup";
+        public static final String SETUPUSERSETTINGS = "setupusersettings";
+
 
     }
 

@@ -14,8 +14,16 @@ public class Helper {
 
     public static final int TOTALNRCATEGORIES = 7;
 
+    public static final String INT_TYPE = "INT";
+    public static final String FLOAT_TYPE = "FLOAT";
+    public static final String STRING_TYPE = "STRING";
+    public static final int DEFAULT_INT_VALUE = 0;
+    public static final float DEFAULT_FLOAT_VALUE = 0;
+    public static final String DEFAULT_STRING_VALUE = "";
     public static final String VALUES_CATEGORY = "ValuesCategory";
     public static final String USERS_SETTINGS = "UserSettings";
+
+    public static final String[] DAY_NUMBER = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
 
     public static final int[] CATEGORY_COLORS = {R.color.Groceries,
             R.color.Family,

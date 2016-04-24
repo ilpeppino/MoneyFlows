@@ -11,72 +11,70 @@ public class StorageObject {
     public static final String INT_TYPE = "INT";
     public static final String FLOAT_TYPE = "FLOAT";
     public static final String STRING_TYPE = "STRING";
+    public static final String VALUES_CATEGORY = "ValuesCategory";
+    public static final String USERS_SETTINGS = "UserSettings";
     private static final int DEFAULT_INT_VALUE = 0;
-    private static final int DEFAULT_FLOAT_VALUE = 0;
+    private static final float DEFAULT_FLOAT_VALUE = 0;
     private static final String DEFAULT_STRING_VALUE = "";
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private String mFileType;
+    private static StorageObject storageObject;
+    private SharedPreferences spUserSettings, spValuesCategory;
 
-    public StorageObject(Context context, String fileType, String fileName) {
-        sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        mFileType = fileType;
+    // Constructor
+    private StorageObject(Context context) {
+        spUserSettings = context.getSharedPreferences(USERS_SETTINGS, Context.MODE_PRIVATE);
+        spValuesCategory = context.getSharedPreferences(VALUES_CATEGORY, Context.MODE_PRIVATE);
     }
 
-    public void setValue(String key, Object value) {
-
-        switch (mFileType) {
-            case INT_TYPE:
-                editor.putInt(key, (int) value);
-                editor.commit();
-                break;
-            case FLOAT_TYPE:
-                editor.putFloat(key, (float) value);
-                editor.commit();
-                break;
-            case STRING_TYPE:
-                editor.putString(key, (String) value);
-                editor.commit();
-                break;
+    // Call to get the instance of StorageObject (dont call the constructor)
+    public static StorageObject getInstance(Context context) {
+        if (storageObject == null) {
+            storageObject = new StorageObject(context);
         }
-
+        return storageObject;
     }
 
-    public Object getValue(String key) {
-
-        switch (mFileType) {
-            case INT_TYPE:
-                return sharedPreferences.getInt(key, DEFAULT_INT_VALUE);
-            case FLOAT_TYPE:
-                return sharedPreferences.getFloat(key, DEFAULT_FLOAT_VALUE);
-            case STRING_TYPE:
-                return sharedPreferences.getString(key, DEFAULT_STRING_VALUE);
-        }
-        return null;
+    ////////////////////////////
+    // VALUESCATEGORY operations
+    ////////////////////////////
+    public void setValuesCategory(String key, Float value) {
+        SharedPreferences.Editor editor = spValuesCategory.edit();
+        editor.putFloat(key, value);
+        editor.commit();
     }
 
-    public void resetValues() {
+    public Float getValuesCategory(String key) {
+        return spValuesCategory.getFloat(key, DEFAULT_FLOAT_VALUE);
+    }
+
+    public void removeValuesCategory(String key, Float valueToRemove) {
+        SharedPreferences.Editor editor = spValuesCategory.edit();
+        editor.putFloat(key, spValuesCategory.getFloat(key, DEFAULT_FLOAT_VALUE) - valueToRemove);
+        editor.commit();
+    }
+
+    public void resetValuesCategory() {
+        SharedPreferences.Editor editor = spValuesCategory.edit();
         editor.clear();
         editor.commit();
     }
 
-    public void removeValue(String key, String valueToRemove) {
-        switch (mFileType) {
-            case FLOAT_TYPE:
-                editor.putFloat(key, sharedPreferences.getFloat(key, DEFAULT_FLOAT_VALUE) - Float.valueOf(valueToRemove));
-                editor.commit();
-                break;
-        }
+    public void updateValuesCategory(String key, Float oldValue, Float newValue) {
+        SharedPreferences.Editor editor = spValuesCategory.edit();
+        editor.putFloat(key, spValuesCategory.getFloat(key, DEFAULT_FLOAT_VALUE) - oldValue + newValue);
+        editor.commit();
     }
 
-    public void updateValue(String key, String oldValue, String newValue) {
-        switch (mFileType) {
-            case FLOAT_TYPE:
-                editor.putFloat(key, sharedPreferences.getFloat(key, DEFAULT_FLOAT_VALUE) - Float.valueOf(oldValue) + Float.valueOf(newValue));
-                editor.commit();
-                break;
-        }
+    ////////////////////////////
+    // USERSETTINGS operations
+    ////////////////////////////
+    public void setUsersSettings(String key, int value) {
+        SharedPreferences.Editor editor = spUserSettings.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    public int getUsersSettings(String key) {
+        return spUserSettings.getInt(key, DEFAULT_INT_VALUE);
     }
 
 

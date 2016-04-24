@@ -16,13 +16,28 @@ public class DbOperations extends SQLiteOpenHelper {
     public static final String DB_NAME = "cost_history.db";
     private static final String TAG = "Class: DbOperations";
     private static final int DB_VERSION = 1;
-    private static final String CREATE_TABLE =
+    private static final String CREATE_TABLE_COST_HISTORY =
             "create table " + FeedReaderContract.CostEntry.TABLE_NAME + "(" +
                     FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_COST + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY + " text, " +
                     FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " text);";
+
+    private static final String CREATE_TABLE_COST_HISTORY_ARCHIVE =
+            "create table " + FeedReaderContract.CostEntryArchive.TABLE_NAME + "(" +
+                    FeedReaderContract.CostEntryArchive.COLUMN_NAME_TIMESTAMP + " text, " +
+                    FeedReaderContract.CostEntryArchive.COLUMN_NAME_COST + " text, " +
+                    FeedReaderContract.CostEntryArchive.COLUMN_NAME_DESCRIPTION + " text, " +
+                    FeedReaderContract.CostEntryArchive.COLUMN_NAME_CATEGORY + " text, " +
+                    FeedReaderContract.CostEntryArchive.COLUMN_NAME_DATE + " text);";
+
+    private static final String CREATE_TABLE_USER_SETTINGS =
+            "create table " + FeedReaderContract.UserSettings.TABLE_NAME + "(" +
+                    FeedReaderContract.UserSettings.COLUMN_NAME_CURRENTACCESS + " text, " +
+                    FeedReaderContract.UserSettings.COLUMN_NAME_LASTACCESS + " text, " +
+                    FeedReaderContract.UserSettings.COLUMN_NAME_RESETDAY + " text, " +
+                    FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP + " text);";
 
 //    private static final String DELETE_TABLE = "DELETE FROM ";
 
@@ -46,7 +61,24 @@ public class DbOperations extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
 
-        db.execSQL(CREATE_TABLE);
+        try {
+            db.execSQL(CREATE_TABLE_COST_HISTORY);
+        } catch (Exception e) {
+            Log.d(TAG, "Error when creating table COST_HISTORY");
+        }
+
+        try {
+            db.execSQL(CREATE_TABLE_COST_HISTORY_ARCHIVE);
+        } catch (Exception e) {
+            Log.d(TAG, "Error when creating table COST_HISTORY_ARCHIVE");
+        }
+
+        try {
+            db.execSQL(CREATE_TABLE_USER_SETTINGS);
+        } catch (Exception e) {
+            Log.d(TAG, "Error when creating table USER_SETTINGS");
+        }
+
 
 
         Log.d(TAG, "Creating table...");
@@ -81,6 +113,23 @@ public class DbOperations extends SQLiteOpenHelper {
 
     }
 
+    public void setupUserSettings(SQLiteDatabase db, String dayOfToday) {
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FeedReaderContract.UserSettings.COLUMN_NAME_CURRENTACCESS, dayOfToday);
+        contentValues.put(FeedReaderContract.UserSettings.COLUMN_NAME_LASTACCESS, dayOfToday);
+        contentValues.put(FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP, dayOfToday);
+        contentValues.put(FeedReaderContract.UserSettings.COLUMN_NAME_RESETDAY, "");
+        db.insert(FeedReaderContract.UserSettings.TABLE_NAME, null, contentValues);
+    }
+
+    public String getLastBackup() {
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(true, FeedReaderContract.UserSettings.TABLE_NAME, new String[]{FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP}, null, null, null, null, null, null);
+        return cursor.getString(cursor.getColumnIndex(FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP));
+    }
+
     public void updateRow(SQLiteDatabase db, String idTimestamp, String newCost, String newDescription, String category, String date) {
         // TODO implement update row database operation
         // TransactionAtRowId trx = moveCursorToRowId(db, position);
@@ -95,35 +144,10 @@ public class DbOperations extends SQLiteOpenHelper {
         db.update(FeedReaderContract.CostEntry.TABLE_NAME, contentValues, FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP + "=?", args);
     }
 
-//    public TransactionAtRowId moveCursorToRowId(SQLiteDatabase db, int position) {
-//
-//        // TransactionAtRowId trx = new TransactionAtRowId();
-//        Cursor c1 = db.rawQuery("SELECT _ROWID_,* FROM HISTORY", null);
-//        c1.moveToPosition(position);
-//        rowidAtPosition = c1.getString(c1.getColumnIndex("rowid"));
-//        categoryAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
-//        costAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
-//        descriptionAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
-//        dateAtPosition = c1.getString(c1.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE));
-//
-//        TransactionAtRowId trx = new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
-//
-//        return trx;
-//
-//    }
-
-//    public TransactionAtRowId getTransactionAtRowId() {
-//
-//        return new TransactionAtRowId(rowidAtPosition, categoryAtPosition, costAtPosition, dateAtPosition, descriptionAtPosition);
-//
-//    }
-
     public String[] getAllDescriptions() {
 
         SQLiteDatabase db = getReadableDatabase();
-
         Cursor cursor = db.query(true, FeedReaderContract.CostEntry.TABLE_NAME, new String[]{FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION}, null, null, null, null, null, null);
-
         if (cursor.getCount() > 0) {
             String[] str = new String[cursor.getCount()];
             int i = 0;
@@ -147,34 +171,6 @@ public class DbOperations extends SQLiteOpenHelper {
 
 
     }
-
-//    public class TransactionAtRowId {
-//
-//        String rowidAtPosition,
-//                categoryAtPosition,
-//                costAtPosition,
-//                dateAtPosition,
-//                descriptionAtPosition;
-//
-//        TransactionAtRowId() {
-//            this.categoryAtPosition = "";
-//            this.rowidAtPosition = "";
-//            this.costAtPosition = "";
-//            this.dateAtPosition = "";
-//            this.descriptionAtPosition = "";
-//        }
-//
-//        TransactionAtRowId(String rowid, String category, String cost, String date, String description) {
-//
-//            this.rowidAtPosition = rowid;
-//            this.categoryAtPosition = category;
-//            this.costAtPosition = cost;
-//            this.dateAtPosition = date;
-//            this.descriptionAtPosition = description;
-//
-//        }
-//
-//    }
 
 
 }

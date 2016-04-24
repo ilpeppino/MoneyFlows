@@ -1,7 +1,9 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +28,7 @@ import org.achartengine.GraphicalView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_RESET_ALL = 1;
     public static final int REQUEST_CODE_SETTINGS = 2;
     // SharedPreferences, editors and names definition
-    StorageObject soUserSettings;
-    StorageObject soValuesCategory;
     int accessnumber;
     ArrayAdapter<String> desc_adapter;
     // Only for testing purposes
     private boolean simulateFirstUse = false;
+
+    // Shared preferences vars
+
+    private SharedPreferences spUserSettings, spValuesCategory;
 
 
     // Object references to cost and description in the main mGraphicalLayout screen
@@ -66,9 +71,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainactivity_activity);
 
-        // Create object reference to users settings and values category
-        soUserSettings = new StorageObject(getApplicationContext(), StorageObject.INT_TYPE, Helper.USERS_SETTINGS);
-        soValuesCategory = new StorageObject(getApplicationContext(), StorageObject.FLOAT_TYPE, Helper.VALUES_CATEGORY);
+        spUserSettings = this.getSharedPreferences(Helper.USERS_SETTINGS, Context.MODE_PRIVATE);
+        spValuesCategory = this.getSharedPreferences(Helper.VALUES_CATEGORY, Context.MODE_PRIVATE);
 
         // Toolbar is defined in mainactivity_activityactivity.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,11 +106,17 @@ public class MainActivity extends AppCompatActivity {
 
         // Read the shared preferences and checks if this the first time the app is accessed
         // For first time usage simulation only, clean up the shared preferences and purge table
-        accessnumber = (int) soUserSettings.getValue("accessnumber");
+
+        accessnumber = spUserSettings.getInt("accessnumber", Helper.DEFAULT_INT_VALUE);
         if (simulateFirstUse || accessnumber == 0) {
             accessFirstTime();
         }
-        soUserSettings.setValue("accessnumber", accessnumber++);
+
+        accessnumber++;
+        SharedPreferences.Editor editor = spUserSettings.edit();
+        editor.putInt("accessnumber", accessnumber);
+        editor.commit();
+
 
         // Populate the spinner with the categories, create the list of names, values and colors of
         // the categories and draw the pie chart
@@ -155,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < Helper.CATEGORY_NAMES.length; i++) {
             GraphicalItem graphicalItem = new GraphicalItem();
             graphicalItem.mCategory = Helper.CATEGORY_NAMES[i];
-            graphicalItem.mValue = String.valueOf(soValuesCategory.getValue(Helper.CATEGORY_NAMES[i]));
+            graphicalItem.mValue = String.valueOf(spValuesCategory.getFloat(Helper.CATEGORY_NAMES[i], Helper.DEFAULT_FLOAT_VALUE));
             graphicalItem.mColor = ContextCompat.getColor(this, Helper.CATEGORY_COLORS[i]);
             graphicalItemList.add(graphicalItem);
             Log.d(TAG, "Item " + i + ": " + graphicalItem.mCategory + " " + graphicalItem.mValue + " " + graphicalItem.mColor + "\n");
@@ -168,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
     private void populateArrayValuesCategory() {
         Log.d(TAG, "Populating values category...");
         for (int i = 0; i < Helper.CATEGORY_NAMES.length; i++) {
-            array_categoryValues[i] = (float) soValuesCategory.getValue(Helper.CATEGORY_NAMES[i]);
+
+            array_categoryValues[i] = spValuesCategory.getFloat(Helper.CATEGORY_NAMES[i], Helper.DEFAULT_FLOAT_VALUE);
         }
     }
 
@@ -199,7 +210,10 @@ public class MainActivity extends AppCompatActivity {
             array_categoryValues[index] = updatedCost;
 
             // update file values category
-            soValuesCategory.setValue(selectedItem, updatedCost);
+            SharedPreferences.Editor editor = spValuesCategory.edit();
+            editor.putFloat(selectedItem, updatedCost);
+            editor.commit();
+
 
             // Refresh the graphical view
             drawPieChart();
@@ -225,12 +239,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void accessFirstTime() {
+        // To remove when flag is removed
+        SharedPreferences.Editor editor = spValuesCategory.edit();
+        editor.clear();
+        editor.commit();
 
-        soValuesCategory.resetValues();
-
+        // To remove when flag is removed
         // Clear the cost table (for now)
-        BackgroundTask backgroundTask = new BackgroundTask(this);
-        backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL, null);
+        BackgroundTask btEraseAll = new BackgroundTask(this);
+        btEraseAll.execute(FeedReaderContract.Methods.PREPAREFORFIRSTUSAGE, null);
 
         Log.d(TAG, "Database and values cleared");
 
@@ -335,6 +352,28 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
     }
+
+    private boolean isResetNeeded() {
+
+        java.util.Date date = new Date();
+        Calendar currentCal = Calendar.getInstance();
+        currentCal.setTime(date);
+
+        DbOperations dbOperations = new DbOperations(this);
+        String lastBackupDate = dbOperations.getLastBackup();
+
+        Calendar backupCal = Calendar.getInstance();
+        int backupDay = Integer.valueOf(lastBackupDate.substring(6, lastBackupDate.length() + 1));
+        int backupMonth = Integer.valueOf(lastBackupDate.substring(4, 6));
+        int backupYear = Integer.valueOf(lastBackupDate.substring(0, 4));
+        backupCal.set(backupYear, backupMonth, backupDay);
+
+        //TODO backup data to archive and clear the cost table
+        return currentCal.compareTo(backupCal) > -1;
+
+
+    }
+
 }
 
 

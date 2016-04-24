@@ -46,7 +46,7 @@ public class ResetAll extends AppCompatActivity {
 
         BackgroundTask backgroundTask = new BackgroundTask(this);
         // The execute method trigger the doInBackground method in the backgroundtask
-        backgroundTask.execute(FeedReaderContract.Methods.ERASE_ALL);
+        backgroundTask.execute(FeedReaderContract.Methods.PREPAREFORFIRSTUSAGE);
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", RESULT_OK);
         setResult(Activity.RESULT_OK, returnIntent);

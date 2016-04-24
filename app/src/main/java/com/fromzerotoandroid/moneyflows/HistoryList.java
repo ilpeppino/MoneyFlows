@@ -1,7 +1,9 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -27,14 +29,23 @@ public class HistoryList extends AppCompatActivity {
 
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
     public static final String TAG = "Class: HistoryList";
+    // Shared preferences vars
+    public static final String INT_TYPE = "INT";
+    public static final String FLOAT_TYPE = "FLOAT";
+    public static final String STRING_TYPE = "STRING";
+    public static final String VALUES_CATEGORY = "ValuesCategory";
+    public static final String USERS_SETTINGS = "UserSettings";
     private static final int REQUEST_CODE_DETAILS_TRX = 10;
-    public CustomAdapterHistoryList adapter;
-    List<ListViewItem> listViewItems;
-    List<ListViewItem> filteredListViewItems;
-    ListViewItem selectedItemListView;
-    int position;
-    EditText editText_Search;
-    StorageObject soValuesCategory;
+    private static final int DEFAULT_INT_VALUE = 0;
+    private static final float DEFAULT_FLOAT_VALUE = 0;
+    private static final String DEFAULT_STRING_VALUE = "";
+    private CustomAdapterHistoryList adapter;
+    private List<ListViewItem> listViewItems;
+    private List<ListViewItem> filteredListViewItems;
+    private ListViewItem selectedItemListView;
+    private int position;
+    private EditText editText_Search;
+    private SharedPreferences spUserSettings, spValuesCategory;
 
 
     @Override
@@ -52,7 +63,7 @@ public class HistoryList extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        soValuesCategory = new StorageObject(getApplicationContext(), StorageObject.FLOAT_TYPE, Helper.VALUES_CATEGORY);
+        spValuesCategory = getSharedPreferences(Helper.VALUES_CATEGORY, Context.MODE_PRIVATE);
 
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
@@ -62,11 +73,7 @@ public class HistoryList extends AppCompatActivity {
         try {
             DbOperations dbOperations = new DbOperations(this);
             SQLiteDatabase db = dbOperations.getWritableDatabase();
-
-
             Cursor c = db.rawQuery(QUERY_ALL, null);
-
-
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -91,32 +98,31 @@ public class HistoryList extends AppCompatActivity {
             Log.e("History", "Error during database processing");
         }
 
+        // set listview and its adapter
+        editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
+        editText_Search.setFocusable(false);
         final ListView listview = (ListView) findViewById(R.id.listView);
-        registerForContextMenu(listview);
         adapter = new CustomAdapterHistoryList(this, listViewItems);
         listview.setAdapter(adapter);
+        // ocntext menu on listview
+        registerForContextMenu(listview);
+        // set filter on description
         listview.setTextFilterEnabled(true);
         filteredListViewItems = adapter.getFilteredResult();
 
-        editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
-        editText_Search.setFocusable(false);
+
         editText_Search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG, "Text [" + s + "]");
                 adapter.getFilter().filter(s.toString());
                 filteredListViewItems = adapter.getFilteredResult();
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -136,12 +142,10 @@ public class HistoryList extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
-
         if (id == android.R.id.home) {
             Intent upIntent = new Intent(this, MainActivity.class);
             NavUtils.navigateUpTo(this, upIntent);
         }
-
         return true;
     }
 
@@ -150,8 +154,6 @@ public class HistoryList extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         Log.d(TAG, "On long click");
         getMenuInflater().inflate(R.menu.history_rowitem_menu, menu);
-
-
     }
 
     @Override
@@ -162,43 +164,37 @@ public class HistoryList extends AppCompatActivity {
         position = info.position;
         filteredListViewItems = adapter.getFilteredResult();
         selectedItemListView = filteredListViewItems.get(position);
-        String idtimestamp = selectedItemListView.idtimestamp;
-        String category = selectedItemListView.category;
-        String cost = selectedItemListView.cost;
-//        String date = selectedItemListView.date;
-        String description = selectedItemListView.description;
 
-        if (item.getItemId() == R.id.deleterowitem) {
-            // Delete row from db
-            BackgroundTask backgroundTask = new BackgroundTask(this);
-            backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, idtimestamp);
+        switch (item.getItemId()) {
+            case R.id.deleterowitem:
+                // Delete row from db
+                BackgroundTask backgroundTask = new BackgroundTask(this);
+                backgroundTask.execute(FeedReaderContract.Methods.DELETE_ROW, selectedItemListView.idtimestamp);
 
-            // Remove item from listview
-            filteredListViewItems.remove(info.position);
-            adapter.notifyDataSetChanged();
-            listViewItems.remove(selectedItemListView);
+                // Remove item from listview
+                filteredListViewItems.remove(info.position);
+                adapter.notifyDataSetChanged();
+                listViewItems.remove(selectedItemListView);
 
 //            // Update value in shared preferences
-            soValuesCategory.removeValue(category, cost);
+
+                SharedPreferences.Editor editor = spValuesCategory.edit();
+                editor.putFloat(selectedItemListView.category, spValuesCategory.getFloat(selectedItemListView.category, DEFAULT_FLOAT_VALUE) - Float.valueOf(selectedItemListView.cost));
+                editor.commit();
+                break;
+
+            case R.id.updaterowitem:
+                Intent myIntent = new Intent(this, UpdateTransaction.class);
+                myIntent.putExtra("IdTimestamp", selectedItemListView.idtimestamp);
+                myIntent.putExtra("Cost", selectedItemListView.cost);
+                myIntent.putExtra("Category", selectedItemListView.category);
+                myIntent.putExtra("Date", selectedItemListView.date);
+                myIntent.putExtra("Description", selectedItemListView.description);
+                startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
+                break;
 
         }
-
-        // TODO refactor update operation
-        if (item.getItemId() == R.id.updaterowitem) {
-
-            Intent myIntent = new Intent(this, UpdateTransaction.class);
-            myIntent.putExtra("IdTimestamp", selectedItemListView.idtimestamp);
-            myIntent.putExtra("Cost", selectedItemListView.cost);
-            myIntent.putExtra("Category", selectedItemListView.category);
-            myIntent.putExtra("Date", selectedItemListView.date);
-            myIntent.putExtra("Description", selectedItemListView.description);
-            startActivityForResult(myIntent, REQUEST_CODE_DETAILS_TRX);
-
-        }
-
-
         return super.onContextItemSelected(item);
-
     }
 
     @Override
@@ -211,10 +207,10 @@ public class HistoryList extends AppCompatActivity {
                 String newCost = data.getStringExtra("newCost");
                 String newDescription = data.getStringExtra("newDescription");
 
-                // TODO update the values in sharedpref correctly
                 // Update value in shared preferences
-                soValuesCategory.updateValue(selectedItemListView.category, selectedItemListView.cost, newCost);
-
+                SharedPreferences.Editor editor = spValuesCategory.edit();
+                editor.putFloat(selectedItemListView.category, spValuesCategory.getFloat(selectedItemListView.category, DEFAULT_FLOAT_VALUE) - Float.valueOf(selectedItemListView.cost) + Float.valueOf(newCost));
+                editor.commit();
 
                 ListViewItem modifiedListItem = new ListViewItem();
                 modifiedListItem.idtimestamp = selectedItemListView.idtimestamp;
@@ -224,8 +220,6 @@ public class HistoryList extends AppCompatActivity {
                 modifiedListItem.date = selectedItemListView.date;
                 listViewItems.set(position, modifiedListItem);
                 adapter.notifyDataSetChanged();
-
-
 
                 super.onActivityResult(requestCode, resultCode, data);
             }

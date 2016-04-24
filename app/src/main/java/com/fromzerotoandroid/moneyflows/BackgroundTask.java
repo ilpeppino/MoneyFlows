@@ -6,6 +6,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 //The 4 steps
 //        When an asynchronous task is executed, the task goes through 4 steps:
 //        onPreExecute(), invoked on the UI thread before the task is executed. This step is normally used to setup the task, for instance by showing a progress bar in the user interface.
@@ -76,12 +80,18 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 toReturn = "One row inserted...";
                 break;
 
-            case FeedReaderContract.Methods.ERASE_ALL:
+            case FeedReaderContract.Methods.PREPAREFORFIRSTUSAGE:
 
-                Log.d(TAG, "Database operation: RESET_ALL");
+                Log.d(TAG, "Database operation: PREPAREFORFIRSTUSAGE");
+
+                java.util.Date date = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
 //
 //                // Purge the table from data
                 dbOperations.purgeTable(db, FeedReaderContract.CostEntry.TABLE_NAME);
+                dbOperations.purgeTable(db, FeedReaderContract.UserSettings.TABLE_NAME);
+                dbOperations.setupUserSettings(db, dateFormat.format(date));
                 dbOperations.close();
 
 
@@ -103,7 +113,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
 
             case FeedReaderContract.Methods.UPDATE_ROW:
-
+                Log.d(TAG, "Database operation: UPDATE_ROW");
                 mIdTimestamp = params[1];
                 // mPosition = Integer.valueOf(params[1]);
                 mCost = params[2];
@@ -117,6 +127,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 toReturn = "Row updated...";
                 break;
+
         }
         db.close();
         return toReturn;
