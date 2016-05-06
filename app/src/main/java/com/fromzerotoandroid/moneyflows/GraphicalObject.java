@@ -3,11 +3,14 @@ package com.fromzerotoandroid.moneyflows;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.CategorySeries;
+import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
@@ -23,11 +26,13 @@ public class GraphicalObject {
     private CategorySeries mSeries = new CategorySeries("");
     private GraphicalView mChartView;
     private List<GraphicalItem> mGraphicalItems;
+    private Context context;
 
-    GraphicalObject() {
+    GraphicalObject(Context c) {
         mGraphicalItems = new ArrayList<GraphicalItem>();
         mRenderer = new DefaultRenderer();
         mSeries = new CategorySeries("");
+        context = c;
     }
 
 //    GraphicalObject(List<GraphicalItem> graphicalItemList) {
@@ -76,7 +81,7 @@ public class GraphicalObject {
 //        return mChartView;
 //    }
 
-    public void drawChart(Context context, LinearLayout mGraphicalLayout, String chartType) {
+    public void drawChart(final Context context, LinearLayout mGraphicalLayout, String chartType) {
         setSeriesRenderer();
 
         if (mChartView == null) {
@@ -84,6 +89,26 @@ public class GraphicalObject {
                 // Add the cost in the db
                 case Helper.PIE_CHART:
                     mChartView = ChartFactory.getPieChartView(context, mSeries, mRenderer);
+                    mChartView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
+                            mRenderer.setClickEnabled(true);
+                            mRenderer.setSelectableBuffer(100);
+                            if (seriesSelection == null) {
+                                Toast
+                                        .makeText(context, "No chart element was clicked",
+                                                Toast.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                Toast.makeText(
+                                        context,
+                                        "Chart element data point index " + seriesSelection.getPointIndex()
+                                                + " was clicked" + " point value=" + seriesSelection.getValue(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     break;
             }
 
@@ -121,7 +146,9 @@ public class GraphicalObject {
         mRenderer.setLegendTextSize(20);
         mRenderer.setMargins(new int[]{20, 30, 15, 0});
         mRenderer.setZoomButtonsVisible(true);
-        mRenderer.setStartAngle(90);
+        mRenderer.setStartAngle(0);
+        mRenderer.setClickEnabled(true);
+        mRenderer.setSelectableBuffer(100);
     }
 
 }

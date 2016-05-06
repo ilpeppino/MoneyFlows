@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         s = (Spinner) findViewById(R.id.spinner);
         et_Cost.setSelectAllOnFocus(true);
         mGraphicalLayout = (LinearLayout) findViewById(R.id.chart);
-        mGraphicalObject = new GraphicalObject();
+        mGraphicalObject = new GraphicalObject(getApplicationContext());
 
         // Fill values for the autocomplete on the description
         DbOperations dbOperations = new DbOperations(this);

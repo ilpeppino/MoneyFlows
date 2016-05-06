@@ -59,8 +59,6 @@ public final class FeedReaderContract {
         public static final String DELETE_ROW = "delete_row";
         public static final String UPDATE_ROW = "update_row";
         public static final String GETLASTBACKUP = "getlastbackup";
-        public static final String SETUPUSERSETTINGS = "setupusersettings";
-
 
     }
 

@@ -73,8 +73,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 mCategory = params[4];
                 mDate = params[5];
 
-
+                db.beginTransaction();
                 dbOperations.addRowToTable(db, mIdTimestamp, mCost, mDescription, mCategory, mDate);
+                db.setTransactionSuccessful();
+                db.endTransaction();
                 dbOperations.close();
 
                 toReturn = "One row inserted...";
@@ -89,9 +91,12 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
 //
 //                // Purge the table from data
+                db.beginTransaction();
                 dbOperations.purgeTable(db, FeedReaderContract.CostEntry.TABLE_NAME);
                 dbOperations.purgeTable(db, FeedReaderContract.UserSettings.TABLE_NAME);
                 dbOperations.setupUserSettings(db, dateFormat.format(date));
+                db.setTransactionSuccessful();
+                db.endTransaction();
                 dbOperations.close();
 
 
@@ -105,7 +110,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
                 mIdTimestamp = params[1];
 
+                db.beginTransaction();
                 dbOperations.deleteRowFromTable(db, mIdTimestamp);
+                db.setTransactionSuccessful();
+                db.endTransaction();
                 dbOperations.close();
 
                 toReturn = "Row deleted...";
@@ -121,8 +129,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 mCategory = params[4];
                 mDate = params[5];
 
-
+                db.beginTransaction();
                 dbOperations.updateRow(db, mIdTimestamp, mCost, mDescription, mCategory, mDate);
+                db.setTransactionSuccessful();
+                db.endTransaction();
                 dbOperations.close();
 
                 toReturn = "Row updated...";

@@ -126,7 +126,7 @@ public class DbOperations extends SQLiteOpenHelper {
     public String getLastBackup() {
 
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(true, FeedReaderContract.UserSettings.TABLE_NAME, new String[]{FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP}, null, null, null, null, null, null);
+        Cursor cursor = db.rawQuery("SELECT " + FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP + " FROM " + FeedReaderContract.UserSettings.TABLE_NAME, null);
         return cursor.getString(cursor.getColumnIndex(FeedReaderContract.UserSettings.COLUMN_NAME_LASTBACKUP));
     }
 
@@ -147,6 +147,7 @@ public class DbOperations extends SQLiteOpenHelper {
     public String[] getAllDescriptions() {
 
         SQLiteDatabase db = getReadableDatabase();
+        db.beginTransaction();
         Cursor cursor = db.query(true, FeedReaderContract.CostEntry.TABLE_NAME, new String[]{FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION}, null, null, null, null, null, null);
         if (cursor.getCount() > 0) {
             String[] str = new String[cursor.getCount()];
@@ -156,9 +157,15 @@ public class DbOperations extends SQLiteOpenHelper {
                 i++;
             }
             cursor.close();
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
             return str;
         } else {
             cursor.close();
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
             return new String[]{};
         }
 
