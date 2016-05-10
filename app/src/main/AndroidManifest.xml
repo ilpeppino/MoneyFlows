@@ -69,6 +69,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.fromzerotoandroid.moneyflows.UpdateTransaction" />
         </activity>
+        <activity
+            android:name=".GraphicalDetail"
+            android:label="GraphicalDetails"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.fromzerotoandroid.moneyflows.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
