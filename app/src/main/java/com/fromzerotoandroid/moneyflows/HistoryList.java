@@ -115,18 +115,20 @@ public class HistoryList extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG, "Text [" + s + "]");
                 adapter.getFilter().filter(s.toString());
                 filteredListViewItems = adapter.getFilteredResult();
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -184,7 +186,7 @@ public class HistoryList extends AppCompatActivity {
                 break;
 
             case R.id.updaterowitem:
-                Intent myIntent = new Intent(this, UpdateTransaction.class);
+                Intent myIntent = new Intent(this, UpdateTrxNew.class);
                 myIntent.putExtra("IdTimestamp", selectedItemListView.idtimestamp);
                 myIntent.putExtra("Cost", selectedItemListView.cost);
                 myIntent.putExtra("Category", selectedItemListView.category);
@@ -206,18 +208,21 @@ public class HistoryList extends AppCompatActivity {
 
                 String newCost = data.getStringExtra("newCost");
                 String newDescription = data.getStringExtra("newDescription");
-
+                String newCategory = data.getStringExtra("newCategory");
+                String newDate = data.getStringExtra("newDate");
                 // Update value in shared preferences
                 SharedPreferences.Editor editor = spValuesCategory.edit();
-                editor.putFloat(selectedItemListView.category, spValuesCategory.getFloat(selectedItemListView.category, DEFAULT_FLOAT_VALUE) - Float.valueOf(selectedItemListView.cost) + Float.valueOf(newCost));
+                editor.putFloat(selectedItemListView.category, spValuesCategory.getFloat(selectedItemListView.category, DEFAULT_FLOAT_VALUE) - Float.valueOf(selectedItemListView.cost));
+                editor.putFloat(newCategory, spValuesCategory.getFloat(newCategory, DEFAULT_FLOAT_VALUE) + Float.valueOf(newCost));
                 editor.commit();
 
                 ListViewItem modifiedListItem = new ListViewItem();
                 modifiedListItem.idtimestamp = selectedItemListView.idtimestamp;
                 modifiedListItem.cost = newCost;
                 modifiedListItem.description = newDescription;
-                modifiedListItem.category = selectedItemListView.category;
-                modifiedListItem.date = selectedItemListView.date;
+                modifiedListItem.category = newCategory;
+                //  modifiedListItem.date = selectedItemListView.date;
+                modifiedListItem.date = newDate;
                 listViewItems.set(position, modifiedListItem);
                 adapter.notifyDataSetChanged();
 

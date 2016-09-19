@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         // Object reference to the cost and description text views
         et_Cost = (EditText) findViewById(R.id.etCost);
         et_Description = (AutoCompleteTextView) findViewById(R.id.etDescription);
+        TextView tv_Text = (TextView) findViewById(R.id.graphLabel);
+        tv_Text.setText(new SimpleDateFormat("MMM yyyy").format(new Date()));
         s = (Spinner) findViewById(R.id.spinner);
         et_Cost.setSelectAllOnFocus(true);
         mGraphicalLayout = (LinearLayout) findViewById(R.id.chart);

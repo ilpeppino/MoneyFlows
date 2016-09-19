@@ -21,7 +21,7 @@ public class AboutActivity extends AppCompatActivity {
         dialog.setTitle("About");
         dialog.show();
 
-//        setContentView(R.layout.activity_about);
+//        setContentView(R.details_trx_activity.activity_about);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 

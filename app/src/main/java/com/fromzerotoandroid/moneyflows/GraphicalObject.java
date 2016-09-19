@@ -101,11 +101,15 @@ public class GraphicalObject {
                                                 Toast.LENGTH_SHORT)
                                         .show();
                             } else {
+
                                 Toast.makeText(
                                         context,
-                                        "Chart element data point index " + seriesSelection.getPointIndex()
+                                        "Chart element data point index " + mSeries.getCategory(seriesSelection.getPointIndex())
                                                 + " was clicked" + " point value=" + seriesSelection.getValue(),
                                         Toast.LENGTH_SHORT).show();
+//                                Intent i = new Intent();
+//                                i.putExtra("nameCategory", seriesSelection.getValue());
+
                             }
                         }
                     });
@@ -124,9 +128,9 @@ public class GraphicalObject {
 //    public void drawPieChart(CategorySeries series, DefaultRenderer renderer) {
 //        setSeriesRenderer();
 //        if (mChartView == null) {
-//            LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
+//            LinearLayout details_trx_activity = (LinearLayout) findViewById(R.id.chart);
 //            mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
-//            layout.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.MATCH_PARENT));
+//            details_trx_activity.addView(mChartView, new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.MATCH_PARENT));
 //
 //        } else {
 //

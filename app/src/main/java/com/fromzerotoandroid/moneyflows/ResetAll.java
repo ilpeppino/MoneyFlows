@@ -25,7 +25,7 @@ public class ResetAll extends AppCompatActivity {
         dialog.setTitle("Erase data");
         dialog.show();
 
-//        setContentView(R.layout.activity_reset_all);
+//        setContentView(R.details_trx_activity.activity_reset_all);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //

@@ -70,6 +70,15 @@
                 android:value="com.fromzerotoandroid.moneyflows.UpdateTransaction" />
         </activity>
         <activity
+            android:name=".UpdateTrxNew"
+            android:label="Update transaction"
+            android:parentActivityName=".UpdateTrxNew"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.fromzerotoandroid.moneyflows.UpdateTrxNew" />
+        </activity>
+        <activity
             android:name=".GraphicalDetail"
             android:label="GraphicalDetails"
             android:parentActivityName=".MainActivity"
