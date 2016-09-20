@@ -28,6 +28,8 @@ import java.util.List;
 public class HistoryList extends AppCompatActivity {
 
     public static final String QUERY_ALL = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME + " ORDER BY " + FeedReaderContract.CostEntry.COLUMN_NAME_DATE + " DESC";
+    public static final String QUERY_BASE = "select * from " + FeedReaderContract.CostEntry.TABLE_NAME;
+    public static final String DESCENDENT_ORDER = " DESC";
     public static final String TAG = "Class: HistoryList";
     // Shared preferences vars
     public static final String INT_TYPE = "INT";
@@ -39,6 +41,8 @@ public class HistoryList extends AppCompatActivity {
     private static final int DEFAULT_INT_VALUE = 0;
     private static final float DEFAULT_FLOAT_VALUE = 0;
     private static final String DEFAULT_STRING_VALUE = "";
+    String sortedColumn = FeedReaderContract.CostEntry.COLUMN_NAME_DATE;
+    boolean descendingOrder = true;
     private CustomAdapterHistoryList adapter;
     private List<ListViewItem> listViewItems;
     private List<ListViewItem> filteredListViewItems;
@@ -46,7 +50,6 @@ public class HistoryList extends AppCompatActivity {
     private int position;
     private EditText editText_Search;
     private SharedPreferences spUserSettings, spValuesCategory;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +67,16 @@ public class HistoryList extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         spValuesCategory = getSharedPreferences(Helper.VALUES_CATEGORY, Context.MODE_PRIVATE);
+        spUserSettings = getSharedPreferences(Helper.USERS_SETTINGS, Context.MODE_PRIVATE);
 
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
 
-        queryAllDb();
+        queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, true);
 
         // set listview and its adapter
         editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
         editText_Search.setFocusable(false);
-        final ListView listview = (ListView) findViewById(R.id.listView);
-        adapter = new CustomAdapterHistoryList(this, listViewItems);
-        listview.setAdapter(adapter);
-        // ocntext menu on listview
-        registerForContextMenu(listview);
-        // set filter on description
-        listview.setTextFilterEnabled(true);
-        filteredListViewItems = adapter.getFilteredResult();
 
 
         editText_Search.addTextChangedListener(new TextWatcher() {
@@ -101,14 +97,23 @@ public class HistoryList extends AppCompatActivity {
         });
     }
 
-    private void queryAllDb() {
+    private void queryDb(String whatToSort, boolean descendentOrder) {
         // result will contain the result of the query. It must be defined as ListArray
         listViewItems = new ArrayList<ListViewItem>();
 
         try {
             DbOperations dbOperations = new DbOperations(this);
             SQLiteDatabase db = dbOperations.getWritableDatabase();
-            Cursor c = db.rawQuery(QUERY_ALL, null);
+
+            String query = QUERY_BASE;
+            if (whatToSort != null) {
+                query = query + " ORDER BY " + whatToSort;
+            }
+            if (descendentOrder == true) {
+                query = query + DESCENDENT_ORDER;
+            }
+
+            Cursor c = db.rawQuery(query, null);
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -128,10 +133,43 @@ public class HistoryList extends AppCompatActivity {
                     } while (c.moveToNext());
                 }
                 db.close();
+                adapter.notifyDataSetChanged();
             }
         } catch (Exception e) {
             Log.e("History", "Error during database processing");
         }
+
+        final ListView listview = (ListView) findViewById(R.id.listView);
+        adapter = new CustomAdapterHistoryList(this, listViewItems);
+        listview.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        // ocntext menu on listview
+        registerForContextMenu(listview);
+        // set filter on description
+        listview.setTextFilterEnabled(true);
+        filteredListViewItems = adapter.getFilteredResult();
+
+    }
+
+    public void orderByDate(View v) {
+
+        queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, descendingOrder);
+        descendingOrder = descendingOrder != true;
+    }
+
+    public void orderByCategory(View v) {
+        queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY, descendingOrder);
+        descendingOrder = descendingOrder != true;
+    }
+
+    public void orderByDescription(View v) {
+        queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION, descendingOrder);
+        descendingOrder = descendingOrder != true;
+    }
+
+    public void orderByCost(View v) {
+        queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_COST, descendingOrder);
+        descendingOrder = descendingOrder != true;
     }
 
     @Override
@@ -229,7 +267,7 @@ public class HistoryList extends AppCompatActivity {
                 modifiedListItem.date = newDate;
                 listViewItems.set(position, modifiedListItem);
                 adapter.notifyDataSetChanged();
-                queryAllDb();
+                queryDb(FeedReaderContract.CostEntry.COLUMN_NAME_DATE, true);
 
                 super.onActivityResult(requestCode, resultCode, data);
             }

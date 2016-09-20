@@ -20,8 +20,9 @@ Single click -> quick info
 Long click -> open a new screen with report
 
 DATA
-History -> change trx date
 Backup data every month
 Add custom category
 
+DB
+Change cost to REAL type
 
