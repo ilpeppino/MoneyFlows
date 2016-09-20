@@ -7,6 +7,8 @@
     <color name="customlistitem_Date">#3ce810</color>
     <color name="customlistitem_Cost">#FFFFFFFF</color>
 
+    <color name="bgLogo">#FFFFFFFF</color>
+
 
     <color name="Groceries">#ffff0000</color>
     <color name="Family">#ff00ff00</color>

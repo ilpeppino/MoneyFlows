@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_RESET_ALL = 1;
     public static final int REQUEST_CODE_SETTINGS = 2;
     public static final int DIALOG_ID = 0;
+    private static int SPLASH_TIME_OUT = 4000;
     // SharedPreferences, editors and names definition
     int accessnumber;
     ArrayAdapter<String> desc_adapter;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // Creates the mGraphicalLayout and toolbar for the main mGraphicalLayout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainactivity_activity);
+
 
         spUserSettings = this.getSharedPreferences(Helper.USERS_SETTINGS, Context.MODE_PRIVATE);
         spValuesCategory = this.getSharedPreferences(Helper.VALUES_CATEGORY, Context.MODE_PRIVATE);
