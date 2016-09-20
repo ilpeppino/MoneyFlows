@@ -67,36 +67,8 @@ public class HistoryList extends AppCompatActivity {
 
         Intent i = getIntent();
         Log.d(TAG, "Receving intent...");
-        // result will contain the result of the query. It must be defined as ListArray
-        listViewItems = new ArrayList<ListViewItem>();
 
-        try {
-            DbOperations dbOperations = new DbOperations(this);
-            SQLiteDatabase db = dbOperations.getWritableDatabase();
-            Cursor c = db.rawQuery(QUERY_ALL, null);
-            if (c != null) {
-                if (c.moveToFirst()) {
-                    do {
-                        String idtimestamp = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP));
-                        String cost = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
-                        String category = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
-                        String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
-                        String date = Helper.formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
-
-                        ListViewItem lvItem = new ListViewItem();
-                        lvItem.idtimestamp = idtimestamp;
-                        lvItem.cost = cost;
-                        lvItem.category = category;
-                        lvItem.date = date;
-                        lvItem.description = desc;
-                        listViewItems.add(lvItem);
-                    } while (c.moveToNext());
-                }
-                db.close();
-            }
-        } catch (Exception e) {
-            Log.e("History", "Error during database processing");
-        }
+        queryAllDb();
 
         // set listview and its adapter
         editText_Search = (EditText) findViewById(R.id.searchforiteminhistory);
@@ -129,6 +101,38 @@ public class HistoryList extends AppCompatActivity {
         });
     }
 
+    private void queryAllDb() {
+        // result will contain the result of the query. It must be defined as ListArray
+        listViewItems = new ArrayList<ListViewItem>();
+
+        try {
+            DbOperations dbOperations = new DbOperations(this);
+            SQLiteDatabase db = dbOperations.getWritableDatabase();
+            Cursor c = db.rawQuery(QUERY_ALL, null);
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    do {
+                        String idtimestamp = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_TIMESTAMP));
+                        String cost = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_COST));
+                        String category = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_CATEGORY));
+                        String desc = c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DESCRIPTION));
+                        String date = Helper.formatDate("yyyyMMdd", "dd-MM-yyyy", c.getString(c.getColumnIndex(FeedReaderContract.CostEntry.COLUMN_NAME_DATE)));
+
+                        ListViewItem lvItem = new ListViewItem();
+                        lvItem.idtimestamp = idtimestamp;
+                        lvItem.cost = cost;
+                        lvItem.category = category;
+                        lvItem.date = date;
+                        lvItem.description = desc;
+                        listViewItems.add(lvItem);
+                    } while (c.moveToNext());
+                }
+                db.close();
+            }
+        } catch (Exception e) {
+            Log.e("History", "Error during database processing");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,6 +229,7 @@ public class HistoryList extends AppCompatActivity {
                 modifiedListItem.date = newDate;
                 listViewItems.set(position, modifiedListItem);
                 adapter.notifyDataSetChanged();
+                queryAllDb();
 
                 super.onActivityResult(requestCode, resultCode, data);
             }

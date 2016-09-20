@@ -21,7 +21,7 @@ import java.util.Calendar;
 public class UpdateTrxNew extends AppCompatActivity {
 
     public static final String TAG = "UpdateTransaction";
-    String position, IdTimestamp, cost, description, category, date;
+    String position, IdTimestamp, cost, description, category, date, currentDate;
 
     EditText editTextCost, editTextDescription;
     Spinner spCategory;
@@ -68,12 +68,18 @@ public class UpdateTrxNew extends AppCompatActivity {
         int day = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
         int year = Integer.parseInt(parts[2]);
+        String monthAdjusted = String.valueOf(month);
+        if (monthAdjusted.length() == 1) {
+            monthAdjusted = '0' + monthAdjusted;
+        }
+        currentDate = String.valueOf(year) + monthAdjusted + String.valueOf(day);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
         long milliTime = calendar.getTimeInMillis();
         cvDate.setDate(milliTime);
+
 
         cvDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -117,7 +123,12 @@ public class UpdateTrxNew extends AppCompatActivity {
 
         BackgroundTask backgroundTask = new BackgroundTask(this);
         // The execute method trigger the doInBackground method in the backgroundtask
-        backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, IdTimestamp, newCost, newDescription, newCategory, selectedDateForDb);
+        String newDate;
+        if (selectedCal == null) {
+            backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, IdTimestamp, newCost, newDescription, newCategory, date);
+        } else {
+            backgroundTask.execute(FeedReaderContract.Methods.UPDATE_ROW, IdTimestamp, newCost, newDescription, newCategory, selectedDate);
+        }
         Intent returnIntent = new Intent();
 
 
@@ -128,7 +139,11 @@ public class UpdateTrxNew extends AppCompatActivity {
         returnIntent.putExtra("newCategory", newCategory);
 
 
-        returnIntent.putExtra("newDate", selectedDate);
+        if (selectedCal == null) {
+            returnIntent.putExtra("newDate", date);
+        } else {
+            returnIntent.putExtra("newDate", selectedDate);
+        }
 
         setResult(Activity.RESULT_OK, returnIntent);
         finish();

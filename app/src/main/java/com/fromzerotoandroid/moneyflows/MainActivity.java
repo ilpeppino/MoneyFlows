@@ -1,6 +1,8 @@
 package com.fromzerotoandroid.moneyflows;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     // Defines request codes for intents
     public static final int REQUEST_CODE_RESET_ALL = 1;
     public static final int REQUEST_CODE_SETTINGS = 2;
+    public static final int DIALOG_ID = 0;
     // SharedPreferences, editors and names definition
     int accessnumber;
     ArrayAdapter<String> desc_adapter;
@@ -54,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
     // Object references to cost and description in the main mGraphicalLayout screen
     private EditText et_Cost;
     private AutoCompleteTextView et_Description;
-    private String mCost, mDescription;
+    private String mCost, mDescription, selectedDate;
+    private Button btnDateDialog;
+    private int dpYear, dpMonth, dpDay;
     private GraphicalView mChartView;
     private LinearLayout mGraphicalLayout;
     private Spinner s;
@@ -63,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
     // it stores the category names and the index when a cost is added
     private int index;
     private float[] array_categoryValues = new float[Helper.TOTALNRCATEGORIES];
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dpYear = year;
+            dpMonth = monthOfYear + 1;
+            dpDay = dayOfMonth;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
         spUserSettings = this.getSharedPreferences(Helper.USERS_SETTINGS, Context.MODE_PRIVATE);
         spValuesCategory = this.getSharedPreferences(Helper.VALUES_CATEGORY, Context.MODE_PRIVATE);
+
+        final Calendar cal = Calendar.getInstance();
+        dpYear = cal.get(Calendar.YEAR);
+        dpMonth = cal.get(Calendar.MONTH) + 1;
+        dpDay = cal.get(Calendar.DAY_OF_MONTH);
+        showDialogDateOnButtonClick();
 
         // Toolbar is defined in mainactivity_activityactivity.xml
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_Text = (TextView) findViewById(R.id.graphLabel);
         tv_Text.setText(new SimpleDateFormat("MMM yyyy").format(new Date()));
         s = (Spinner) findViewById(R.id.spinner);
+
         et_Cost.setSelectAllOnFocus(true);
         mGraphicalLayout = (LinearLayout) findViewById(R.id.chart);
         mGraphicalObject = new GraphicalObject(getApplicationContext());
@@ -144,12 +166,31 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+    }
+
+    private void showDialogDateOnButtonClick() {
+        btnDateDialog = (Button) findViewById(R.id.btnDateDialog);
+        btnDateDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog(0);
+            }
+        });
+    }
+
+    protected Dialog onCreateDialog(int id) {
+        if (id == DIALOG_ID) {
+            return new DatePickerDialog(this, datePickerListener, dpYear, dpMonth - 1, dpDay);
+        }
+        return null;
     }
 
     //////////////////////////////////////
     // GRAPHICAL VIEW
     //////////////////////////////////////
     private void drawPieChart() {
+
         mGraphicalObject.setmGraphicalItems(populateGraphicalItemList());
         mGraphicalObject.drawChart(getApplicationContext(), mGraphicalLayout, Helper.PIE_CHART);
 //        if (mChartView == null) {
@@ -221,10 +262,15 @@ public class MainActivity extends AppCompatActivity {
             drawPieChart();
 
             // Insert this value in the table for the history and execute method ADD_COST via doInBackground method in the backgroundtask
-            String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String dpMonthAdjusted = String.valueOf(dpMonth);
+            if (dpMonthAdjusted.length() == 1) {
+                dpMonthAdjusted = '0' + dpMonthAdjusted;
+            }
+            selectedDate = String.valueOf(dpYear) + dpMonthAdjusted + String.valueOf(dpDay);
+            //String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             BackgroundTask backgroundTask = new BackgroundTask(this);
             String currentTimeInMs = String.valueOf(System.currentTimeMillis());
-            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, currentTimeInMs, mCost, mDescription, selectedItem, date);
+            backgroundTask.execute(FeedReaderContract.Methods.ADD_COST, currentTimeInMs, mCost, mDescription, selectedItem, selectedDate);
             updateDescriptionsForAutocomplete();
 
         } else {
